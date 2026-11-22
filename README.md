@@ -2,7 +2,7 @@
 
 <img src="Images/readme/hero-banner.jpg" alt="CryoTray Hero Banner" width="100%" />
 
-<br />
+<br /> <br />
 
 <img src="Images/CryoTray_Icon.png" alt="CryoTray Icon" width="84" />
 
