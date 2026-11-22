@@ -289,7 +289,7 @@ CryoTray.exe
 ## 📄 License & Attribution
 
 Licensed under the **Apache License, Version 2.0** (`Apache-2.0`).  
-Original project created by **ZeroNuxi — ZerroDevs** (`Copyright © 2026 ZeroNuxi - ZerroDevs`).
+
 
 <div align="center">
   <br />
