@@ -169,8 +169,17 @@ Built directly into CryoTray as a modeless utility window (`Views/StressTestWind
 - **Privileges**: Administrator access (required via `app.manifest` for low-level sensor access, power-plan switching, and NT memory optimization)
 - **Driver**: **PawnIO 2.x** for full CPU & motherboard sensor coverage (bundled inside the official installer and portable archive)
 
-### Prebuilt Release Verification
-1. Download `CryoTray-Setup-<version>.exe` or `CryoTray-<version>-win-x64.zip` along with its `.sha256` checksum from **Releases**.
+### Prebuilt Releases (`v0.0.103` Latest)
+
+All official builds (`v0.0.103`, `v0.0.101`, `v0.0.100`) are hosted directly in [**Releases**](https://github.com/hackerlemonaru/CryoTray/releases):
+
+| Artifact | Purpose | Download |
+| :--- | :--- | :--- |
+| **Installer (`50.1 MB`)** | Guided setup to `Program Files`, auto-installs `PawnIO 2.x` | [`CryoTray-Setup-0.0.103.exe`](https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-Setup-0.0.103.exe) ([`.sha256`](https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-Setup-0.0.103.exe.sha256)) |
+| **Portable ZIP (`74.6 MB`)** | Self-contained `win-x64` archive with `PawnIO_setup.exe` | [`CryoTray-0.0.103-win-x64.zip`](https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-0.0.103-win-x64.zip) ([`.sha256`](https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-0.0.103-win-x64.zip.sha256)) |
+| **In-App Update ZIP (`74.6 MB`)** | Hash-verified incremental updater package | [`CryoTray-Update-0.0.103-win-x64.zip`](https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-Update-0.0.103-win-x64.zip) ([`.sha256`](https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-Update-0.0.103-win-x64.zip.sha256)) |
+
+1. Download `CryoTray-Setup-0.0.103.exe` or `CryoTray-0.0.103-win-x64.zip` along with its `.sha256` checksum from [**Releases**](https://github.com/hackerlemonaru/CryoTray/releases/tag/v0.0.103).
 2. Verify file integrity in PowerShell before running:
    ```powershell
    Get-FileHash .\CryoTray-Setup-0.0.103.exe -Algorithm SHA256
