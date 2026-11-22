@@ -1,0 +1,1989 @@
+<Window x:Class="CryoTray.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource App_Title}"
+        Width="444" Height="673"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Icon="pack://application:,,,/Images/CryoTray.ico"
+        FontFamily="{StaticResource SegoeUIVariableText}"
+        ResizeMode="NoResize"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True"
+        ShowInTaskbar="True"
+        Deactivated="Window_Deactivated"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        PreviewMouseDown="Window_PreviewMouseDown"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+
+    <Window.Resources>
+        <!-- Sleek Tooltip Style -->
+        <Style TargetType="ToolTip">
+            <Setter Property="Background" Value="{DynamicResource TooltipBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource TooltipBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Padding" Value="6,3"/>
+        </Style>
+
+        <Style x:Key="SsdToolTipStyle" TargetType="ToolTip">
+            <Setter Property="Background" Value="{DynamicResource PanelAltBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontFamily" Value="{StaticResource SegoeUIVariableText}"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RamToolTipStyle" TargetType="ToolTip">
+            <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="HasDropShadow" Value="True"/>
+            <Setter Property="FontFamily" Value="{StaticResource SegoeUIVariableText}"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RamDarkMenuItemStyle" TargetType="MenuItem">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontFamily" Value="{StaticResource SegoeUIVariableText}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="MenuItem">
+                        <Border x:Name="ItemBdr"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="Transparent"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}"
+                                Margin="2,1"
+                                SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border x:Name="CheckBoxBdr"
+                                        Width="13" Height="13"
+                                        CornerRadius="2"
+                                        Background="{DynamicResource WindowBackgroundBrush}"
+                                        BorderBrush="{DynamicResource BorderStrongBrush}"
+                                        BorderThickness="1"
+                                        Margin="0,0,8,0"
+                                        VerticalAlignment="Center"
+                                        Visibility="Collapsed">
+                                    <Path x:Name="CheckGlyph"
+                                          Data="M2,6.2 L4.8,9 L9.8,3"
+                                          Stroke="{DynamicResource RamAccentBrush}"
+                                          StrokeThickness="1.8"
+                                          Visibility="Collapsed"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                                </Border>
+                                <ContentPresenter Grid.Column="1"
+                                                  ContentSource="Header"
+                                                  VerticalAlignment="Center"
+                                                  RecognizesAccessKey="True"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsCheckable" Value="True">
+                                <Setter TargetName="CheckBoxBdr" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="CheckBoxBdr" Property="BorderBrush" Value="{DynamicResource RamAccentBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="ItemBdr" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                <Setter TargetName="ItemBdr" Property="BorderBrush" Value="{DynamicResource MenuHoverBorderBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="{DynamicResource TextDisabledBrush}"/>
+                                <Setter Property="Cursor" Value="Arrow"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkMenuSeparatorStyle" TargetType="Separator">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Margin" Value="6,4"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Separator">
+                        <Border Height="1" Background="{DynamicResource DividerBrush}" SnapsToDevicePixels="True"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RamDarkContextMenuStyle" TargetType="ContextMenu">
+            <Style.Resources>
+                <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}"
+                       TargetType="Separator"
+                       BasedOn="{StaticResource DarkMenuSeparatorStyle}"/>
+            </Style.Resources>
+            <Setter Property="Background" Value="{DynamicResource MenuBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource MenuBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="4,4"/>
+            <Setter Property="HasDropShadow" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="UseLayoutRounding" Value="True"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource RamDarkMenuItemStyle}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ContextMenu">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Dark Pill ComboBox Style (Zero White Boxes) -->
+        <ControlTemplate x:Key="DarkComboBoxTemplate" TargetType="ComboBox">
+            <Grid>
+                <ToggleButton x:Name="ToggleButton"
+                              Background="{DynamicResource PanelBackgroundBrush}"
+                              BorderBrush="{DynamicResource BorderStrongBrush}"
+                              BorderThickness="1"
+                              Focusable="False"
+                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                              ClickMode="Press">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="2"
+                                    Padding="6,1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Arrow -->
+                                    <Path Grid.Column="1"
+                                          Data="M0,0 L4,4 L8,0"
+                                          Stroke="{DynamicResource TextTertiaryBrush}"
+                                          StrokeThickness="1.4"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Right"
+                                          Margin="6,0,2,0"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+
+                <ContentPresenter x:Name="ContentSite"
+                                  IsHitTestVisible="False"
+                                  Content="{TemplateBinding SelectionBoxItem}"
+                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                  ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Left"
+                                  Margin="8,0,22,0"/>
+
+                <Popup x:Name="Popup"
+                       Placement="Bottom"
+                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                       AllowsTransparency="True"
+                       Focusable="False"
+                       PopupAnimation="Slide">
+                    <Border x:Name="DropDownBorder"
+                            Background="{DynamicResource PanelAltBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderStrongBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            MinWidth="{TemplateBinding ActualWidth}"
+                            MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                        <ScrollViewer SnapsToDevicePixels="True">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </ScrollViewer>
+                    </Border>
+                </Popup>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="DarkComboBoxItem" TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="ItemBorder" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource SelectionBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TimeframeComboStyle" TargetType="ComboBox">
+            <Setter Property="Template" Value="{StaticResource DarkComboBoxTemplate}"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource DarkComboBoxItem}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Height" Value="23"/>
+        </Style>
+
+        <!-- Action Button Style in Title Bar -->
+        <Style x:Key="TitleActionBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="MinWidth" Value="30"/>
+            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BtnBdr" Background="Transparent" CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BtnBdr" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                            </Trigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                    <Condition Binding="{Binding ShowKeyboardFocusCues, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <Setter TargetName="BtnBdr" Property="BorderBrush" Value="{DynamicResource WindowBorderBrush}"/>
+                                <Setter TargetName="BtnBdr" Property="BorderThickness" Value="1"/>
+                            </MultiDataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="UpdateBannerButtonStyle" TargetType="Button">
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="BannerButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BannerButtonBorder" Property="Opacity" Value="0.82"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BannerButtonBorder" Property="Opacity" Value="0.65"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="BannerButtonBorder" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BannerButtonBorder" Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="UpdateBannerCloseStyle" TargetType="Button" BasedOn="{StaticResource UpdateBannerButtonStyle}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="MinWidth" Value="24"/>
+            <Setter Property="MinHeight" Value="24"/>
+        </Style>
+    </Window.Resources>
+
+    <!-- Outer Border -->
+    <Border Background="{DynamicResource WindowBackgroundBrush}"
+            BorderBrush="{DynamicResource WindowBorderBrush}"
+            BorderThickness="1"
+            CornerRadius="0"
+            SnapsToDevicePixels="True"
+            ClipToBounds="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="34"/> <!-- Title Bar -->
+                <RowDefinition Height="Auto"/> <!-- Missing PawnIO Notice -->
+                <RowDefinition Height="124"/> <!-- Hero CPU Card -->
+                <RowDefinition Height="Auto"/> <!-- CPU Temp Chart + Timeframe -->
+                <RowDefinition Height="64"/> <!-- Cooling Mode Row -->
+                <RowDefinition Height="*"/> <!-- Telemetry Rows -->
+            </Grid.RowDefinitions>
+
+            <!-- 1. CUSTOM DARK TITLE BAR -->
+            <Grid Grid.Row="0" Background="{DynamicResource WindowBackgroundBrush}" Margin="12,0,9,0">
+                <!-- App Title -->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="TxtAppTitle"
+                               Text="CryoTray"
+                               Foreground="{DynamicResource TextTitleBrush}"
+                               FontSize="12.5"
+                               FontWeight="SemiBold"/>
+                </StackPanel>
+
+                <!-- Action Icons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <!-- CPU Stress Test (Outline chip) -->
+                    <Button x:Name="BtnStressTest" Style="{StaticResource TitleActionBtn}" Click="BtnStressTest_Click" ToolTip="{DynamicResource Main_TooltipStressTest}" AutomationProperties.Name="{DynamicResource Main_TooltipStressTest}">
+                        <Grid Width="19" Height="19">
+                            <Ellipse x:Name="StressIconRing" Stroke="{DynamicResource IconBrush}" StrokeThickness="1.35"/>
+                            <Path x:Name="StressIconBlades" Fill="{DynamicResource IconBrush}"
+                                  Opacity="0.55">
+                                <Path.Data>
+                                    <GeometryGroup FillRule="Nonzero">
+                                        <PathGeometry Figures="M9.5,9.5 C7.0,7.0 7.2,4.6 9.4,3.0 C11.7,4.4 12.2,6.9 9.5,9.5 Z"/>
+                                        <PathGeometry Figures="M9.5,9.5 C7.0,7.0 7.2,4.6 9.4,3.0 C11.7,4.4 12.2,6.9 9.5,9.5 Z">
+                                            <PathGeometry.Transform><RotateTransform Angle="120" CenterX="9.5" CenterY="9.5"/></PathGeometry.Transform>
+                                        </PathGeometry>
+                                        <PathGeometry Figures="M9.5,9.5 C7.0,7.0 7.2,4.6 9.4,3.0 C11.7,4.4 12.2,6.9 9.5,9.5 Z">
+                                            <PathGeometry.Transform><RotateTransform Angle="240" CenterX="9.5" CenterY="9.5"/></PathGeometry.Transform>
+                                        </PathGeometry>
+                                    </GeometryGroup>
+                                </Path.Data>
+                            </Path>
+                            <Ellipse x:Name="StressIconHub" Width="3" Height="3" Fill="{DynamicResource IconBrush}"/>
+                        </Grid>
+                    </Button>
+
+                    <!-- Tools Menu (Sliders icon: 3 tracks with faders) -->
+                    <Button x:Name="BtnToolsMenu" Style="{StaticResource TitleActionBtn}" Click="BtnToolsMenu_Click" ToolTip="{DynamicResource Main_TooltipTools}" AutomationProperties.Name="{DynamicResource Main_TooltipTools}">
+                        <Button.ContextMenu>
+                            <ContextMenu x:Name="ToolsContextMenu"
+                                         Style="{StaticResource RamDarkContextMenuStyle}"
+                                         Opened="ToolsContextMenu_Opened">
+                                <MenuItem x:Name="MenuToolsStress"
+                                          Header="{DynamicResource Main_TooltipStressTest}"
+                                          Click="MenuToolsStress_Click"/>
+                                <MenuItem x:Name="MenuToolsExportCsv"
+                                          Header="{DynamicResource Main_ToolsExportCsv}"
+                                          Click="MenuToolsExportCsv_Click"/>
+                                <MenuItem x:Name="MenuToolsRecordCsv"
+                                          Header="{DynamicResource Main_ToolsStartCsvLog}"
+                                          Click="MenuToolsRecordCsv_Click"/>
+                                <Separator Style="{StaticResource DarkMenuSeparatorStyle}"/>
+                                <MenuItem x:Name="MenuToolsAbout"
+                                          Header="{DynamicResource Main_AboutTitle}"
+                                          Click="MenuToolsAbout_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                        <Path Data="M2,3 L14,3 M5,1.5 L5,4.5 M2,8 L14,8 M10,6.5 L10,9.5 M2,13 L14,13 M6,11.5 L6,14.5"
+                              Stroke="{DynamicResource IconBrush}" StrokeThickness="1.5"
+                              Width="20" Height="20" Stretch="Uniform"/>
+                    </Button>
+
+                    <!-- Settings (Gear) -->
+                    <Button x:Name="BtnSettings" Style="{StaticResource TitleActionBtn}" Click="BtnSettings_Click" ToolTip="{DynamicResource Main_TooltipSettings}" AutomationProperties.Name="{DynamicResource Main_TooltipSettings}">
+                        <Path x:Name="SettingsIconPath" Data="M7,2 L9,2 L9.3,3.8 A5,5 0 0,1 10.8,4.7 L12.5,3.8 L13.9,5.2 L13,6.9 A5,5 0 0,1 13.9,8.4 L15.7,8.7 L15.7,10.7 L13.9,11 A5,5 0 0,1 13,12.5 L13.9,14.2 L12.5,15.6 L10.8,14.7 A5,5 0 0,1 9.3,15.6 L9,17.4 L7,17.4 L6.7,15.6 A5,5 0 0,1 5.2,14.7 L3.5,15.6 L2.1,14.2 L3,12.5 A5,5 0 0,1 2.1,11 L0.3,10.7 L0.3,8.7 L2.1,8.4 A5,5 0 0,1 3,6.9 L2.1,5.2 L3.5,3.8 L5.2,4.7 A5,5 0 0,1 6.7,3.8 Z M8,6 A3.5,3.5 0 1,0 8,13 A3.5,3.5 0 1,0 8,6 Z"
+                              Fill="{DynamicResource IconBrush}"
+                              Width="20" Height="20" Stretch="Uniform"/>
+                    </Button>
+
+                    <!-- System Info (Monitor outline with i) -->
+                    <Button x:Name="BtnSystemInfo" Style="{StaticResource TitleActionBtn}" Click="BtnSystemInfo_Click" ToolTip="{DynamicResource Main_TooltipSystemInfo}" AutomationProperties.Name="{DynamicResource Main_TooltipSystemInfo}">
+                        <Path x:Name="SystemInfoIconPath" Data="M2,2 L14,2 A1,1 0 0,1 15,3 L15,11 A1,1 0 0,1 14,12 L10,12 L10,14 L12,14 L12,15 L4,15 L4,14 L6,14 L6,12 L2,12 A1,1 0 0,1 1,11 L1,3 A1,1 0 0,1 2,2 Z M7.5,4.5 A0.8,0.8 0 1,0 8.5,4.5 A0.8,0.8 0 1,0 7.5,4.5 Z M7.3,6.5 L8.7,6.5 L8.7,10 L7.3,10 Z"
+                              Fill="{DynamicResource IconBrush}"
+                              Width="20" Height="20" Stretch="Uniform"/>
+                    </Button>
+
+                    <!-- Close (Hide to tray) -->
+                    <Button Style="{StaticResource TitleActionBtn}" Click="BtnClose_Click" ToolTip="{DynamicResource Main_TooltipMinimize}" AutomationProperties.Name="{DynamicResource Main_TooltipMinimize}">
+                        <Path Data="M2,2 L12,12 M12,2 L2,12"
+                              Stroke="{DynamicResource IconBrush}" StrokeThickness="1.5"
+                              Width="16" Height="16" Stretch="Uniform"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <!-- 1B. TOP NOTICES (PawnIO and update banner) -->
+            <StackPanel Grid.Row="1">
+            <Border x:Name="UpdateSuccessBanner"
+                    Height="44"
+                    Background="#B31E4A2A"
+                    BorderBrush="#663FAE5A"
+                    BorderThickness="0,0,0,1"
+                    Visibility="Collapsed">
+                <Grid Margin="12,0,8,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Path Grid.Column="0"
+                          Data="M1,6 L5,10 L11,2"
+                          Stroke="#7EDB8A"
+                          StrokeThickness="1.8"
+                          StrokeStartLineCap="Round"
+                          StrokeEndLineCap="Round"
+                          Width="13"
+                          Height="13"
+                          Stretch="Uniform"
+                          VerticalAlignment="Center"
+                          Margin="0,0,8,0"/>
+                    <TextBlock x:Name="TxtUpdateSuccess"
+                               Grid.Column="1"
+                               Foreground="#E6FFFFFF"
+                               FontSize="11.5"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis"
+                               AutomationProperties.LiveSetting="Assertive"/>
+                    <Button x:Name="BtnUpdateSuccessClose"
+                            Grid.Column="2"
+                            Click="BtnUpdateSuccessClose_Click"
+                            Style="{StaticResource UpdateBannerCloseStyle}"
+                            Width="24"
+                            Height="24"
+                            VerticalAlignment="Center"
+                            ToolTip="{DynamicResource Update_SuccessClose}"
+                            AutomationProperties.Name="{DynamicResource Update_SuccessClose}">
+                        <Path Data="M2,2 L10,10 M10,2 L2,10"
+                              Stroke="#E6FFFFFF"
+                              StrokeThickness="1.4"
+                              Width="11"
+                              Height="11"
+                              Stretch="Uniform"/>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border x:Name="PawnIoBanner"
+                    Height="38"
+                    Background="{DynamicResource PawnIoBackgroundBrush}"
+                    BorderBrush="{DynamicResource PawnIoBorderBrush}"
+                    BorderThickness="0,0,0,1"
+                    Padding="14,4"
+                    Visibility="Collapsed">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="{DynamicResource Main_PawnIoMissing}"
+                               Foreground="{DynamicResource PawnIoTextBrush}"
+                               FontSize="11"
+                               VerticalAlignment="Center"
+                               TextTrimming="CharacterEllipsis"
+                               ToolTip="{DynamicResource Main_PawnIoMissing}"
+                               Margin="0,0,10,0"/>
+                    <Button x:Name="BtnInstallPawnIo"
+                            Grid.Column="1"
+                            Content="{DynamicResource Main_PawnIoAction}"
+                            Click="BtnInstallPawnIo_Click"
+                            Background="{DynamicResource ActiveBackgroundBrush}"
+                            Foreground="{DynamicResource TextPrimaryBrush}"
+                            BorderBrush="{DynamicResource BorderStrongBrush}"
+                            BorderThickness="1"
+                            FontSize="11"
+                            FontWeight="SemiBold"
+                            Padding="10,4"
+                            Cursor="Hand"
+                            VerticalAlignment="Center"
+                            FocusVisualStyle="{x:Null}"
+                            AutomationProperties.Name="{DynamicResource Main_PawnIoActionAutomation}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="ActionBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="3"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="ActionBorder" Property="Background" Value="{DynamicResource PawnIoButtonHoverBrush}"/>
+                                        <Setter TargetName="ActionBorder" Property="BorderBrush" Value="{DynamicResource MenuHoverBorderBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="ActionBorder" Property="Background" Value="{DynamicResource PawnIoButtonPressedBrush}"/>
+                                    </Trigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                            <Condition Binding="{Binding ShowKeyboardFocusCues, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="True"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter TargetName="ActionBorder" Property="BorderBrush" Value="{DynamicResource WindowBorderBrush}"/>
+                                    </MultiDataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border x:Name="UpdateBanner"
+                    Height="44"
+                    Background="#B31B4B63"
+                    BorderBrush="#662B88D8"
+                    BorderThickness="0,0,0,1"
+                    Visibility="Collapsed">
+                <Grid Margin="12,0,8,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="{DynamicResource Update_BannerTitle}"
+                                   Foreground="#E6FFFFFF"
+                                   FontSize="11"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtUpdateBannerVersion"
+                                   Foreground="#FFFFFF"
+                                   FontSize="11.5"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   Margin="6,0,0,0"
+                                   AutomationProperties.LiveSetting="Polite"/>
+                    </StackPanel>
+                    <Button x:Name="BtnUpdateBannerUpdate"
+                            Grid.Column="1"
+                            Content="{DynamicResource Update_BannerUpdate}"
+                            Click="BtnUpdateBannerUpdate_Click"
+                            Style="{StaticResource UpdateBannerButtonStyle}"
+                            Background="#2B88D8"
+                            Foreground="#FFFFFF"
+                            Padding="10,3"
+                            Height="26"
+                            VerticalAlignment="Center"
+                            Margin="0,0,6,0"/>
+                    <Button x:Name="BtnUpdateBannerAbout"
+                            Grid.Column="2"
+                            Content="{DynamicResource Update_BannerAbout}"
+                            Click="BtnUpdateBannerAbout_Click"
+                            Style="{StaticResource UpdateBannerButtonStyle}"
+                            Background="Transparent"
+                            Foreground="#E6FFFFFF"
+                            BorderBrush="#33FFFFFF"
+                            Padding="10,3"
+                            Height="26"
+                            VerticalAlignment="Center"
+                            Margin="0,0,4,0"/>
+                    <Button x:Name="BtnUpdateBannerLater"
+                            Grid.Column="3"
+                            Content="{DynamicResource Update_BannerLater}"
+                            Click="BtnUpdateBannerLater_Click"
+                            Style="{StaticResource UpdateBannerButtonStyle}"
+                            Background="Transparent"
+                            Foreground="#E6FFFFFF"
+                            BorderBrush="#33FFFFFF"
+                            Padding="8,3"
+                            Height="26"
+                            VerticalAlignment="Center"
+                            Margin="0,0,4,0"
+                            ToolTip="{DynamicResource Update_BannerLaterTooltip}"
+                            AutomationProperties.Name="{DynamicResource Update_BannerLaterTooltip}"/>
+                    <Button x:Name="BtnUpdateBannerSkip"
+                            Grid.Column="4"
+                            Content="{DynamicResource Update_BannerSkip}"
+                            Click="BtnUpdateBannerSkip_Click"
+                            Style="{StaticResource UpdateBannerButtonStyle}"
+                            Background="Transparent"
+                            Foreground="#E6FFFFFF"
+                            BorderBrush="Transparent"
+                            Padding="6,3"
+                            Height="26"
+                            VerticalAlignment="Center"
+                            ToolTip="{DynamicResource Update_BannerSkipTooltip}"
+                            AutomationProperties.Name="{DynamicResource Update_BannerSkipTooltip}"/>
+                </Grid>
+            </Border>
+            </StackPanel>
+
+            <!-- 2. HERO CPU HEADER CARD -->
+            <Border Grid.Row="2"
+                    x:Name="HeroCardBorder"
+                    ClipToBounds="True">
+                <Border.Background>
+                    <LinearGradientBrush x:Name="HeroGradient" StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop x:Name="GradStop1" Color="#255D8E" Offset="0.0"/>
+                        <GradientStop x:Name="GradStop2" Color="#1E9FD0" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <Grid>
+                    <!-- Dense Procedural Circuit Board PCB Pattern Overlay matching Camomile -->
+                    <Canvas x:Name="PcbCanvas" Opacity="0.46" IsHitTestVisible="False">
+                        <Canvas.RenderTransform>
+                            <TranslateTransform X="65"/>
+                        </Canvas.RenderTransform>
+
+                        <!-- Fine board grid and copper buses. -->
+                        <Path Data="M-65,8 L379,8 M-65,96 L379,96 M-65,112 L379,112
+                                    M38,0 L38,124 M78,0 L78,124 M162,0 L162,124 M282,0 L282,124 M344,0 L344,124"
+                              Stroke="#66F4FBFF" StrokeThickness="0.55" Fill="Transparent"/>
+                        <Path Data="M-65,48 L18,48 L38,68 L38,94 M-65,52 L14,52 L34,72 L34,96"
+                              Stroke="#8A000000" StrokeThickness="2.2" Fill="Transparent" Opacity="0.55"/>
+
+                        <!-- Small components and pads around the main chip. -->
+                        <Rectangle Canvas.Left="82" Canvas.Top="14" Width="22" Height="10"
+                                   Fill="#18FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Rectangle Canvas.Left="92" Canvas.Top="48" Width="30" Height="14"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Rectangle Canvas.Left="150" Canvas.Top="16" Width="14" Height="8"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Rectangle Canvas.Left="170" Canvas.Top="88" Width="22" Height="10"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Rectangle Canvas.Left="300" Canvas.Top="12" Width="18" Height="10"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Rectangle Canvas.Left="300" Canvas.Top="78" Width="24" Height="16"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Rectangle Canvas.Left="18" Canvas.Top="82" Width="28" Height="12"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+
+                        <!-- Fine pads and vias. -->
+                        <Path Data="M86,26 L100,26 M86,29 L100,29 M96,54 L118,54 M96,57 L118,57
+                                    M154,27 L160,27 M174,92 L188,92 M304,25 L314,25 M304,84 L320,84"
+                              Stroke="#F4FBFF" StrokeThickness="0.7" Fill="Transparent"/>
+                        <Ellipse Canvas.Left="120" Canvas.Top="20" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+                        <Ellipse Canvas.Left="132" Canvas.Top="20" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+                        <Ellipse Canvas.Left="144" Canvas.Top="20" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+                        <Ellipse Canvas.Left="180" Canvas.Top="54" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+                        <Ellipse Canvas.Left="180" Canvas.Top="66" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+                        <Ellipse Canvas.Left="270" Canvas.Top="16" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+                        <Ellipse Canvas.Left="270" Canvas.Top="90" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+
+                        <Ellipse Canvas.Left="250" Canvas.Top="-35" Width="230" Height="190">
+                            <Ellipse.Fill>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#1EFFFFFF" Offset="0"/>
+                                    <GradientStop Color="#00FFFFFF" Offset="1"/>
+                                </RadialGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+
+                        <!-- Denser copper traces through the right half of the board. -->
+                        <Path Data="M255,0 L255,28 L274,28 L274,66 L246,66 L246,96
+                                    M300,0 L300,18 L318,18 L318,44 L348,44 L348,78
+                                    M340,0 L340,12 L364,12 L364,36 L388,36 L388,124
+                                    M282,96 L282,124 M318,84 L318,124 M370,64 L370,124"
+                              Stroke="#AAF4FBFF" StrokeThickness="0.65" Fill="Transparent"/>
+                        <Path Data="M244,42 L266,42 L284,60 L284,92 M330,76 L352,76 L366,90 L366,110
+                                    M-55,24 L-34,24 L-16,42 L-16,74"
+                              Stroke="#B3000000" StrokeThickness="1.8" Fill="Transparent" Opacity="0.7"/>
+                        <Path Data="M0,70 L14,70 L28,58 L44,58 M0,88 L10,88 L22,100 L22,124
+                                    M50,0 L50,20 L62,32 L62,54"
+                              Stroke="#88F4FBFF" StrokeThickness="0.65" Fill="Transparent"/>
+                        <Rectangle Canvas.Left="252" Canvas.Top="16" Width="16" Height="8"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Rectangle Canvas.Left="336" Canvas.Top="54" Width="20" Height="12"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Rectangle Canvas.Left="374" Canvas.Top="92" Width="18" Height="10"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Rectangle Canvas.Left="-58" Canvas.Top="38" Width="22" Height="10"
+                                   Fill="#12FFFFFF" Stroke="#F4FBFF" StrokeThickness="0.8"/>
+                        <Ellipse Canvas.Left="270" Canvas.Top="28" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+                        <Ellipse Canvas.Left="350" Canvas.Top="42" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+                        <Ellipse Canvas.Left="350" Canvas.Top="108" Width="2.5" Height="2.5" Fill="#F4FBFF"/>
+
+                        <!-- Continue the left traces into the shifted chip area. -->
+                        <Path Data="M-65,15 L0,15 M-65,35 L0,35 M-65,55 L0,55 M-65,85 L0,85"
+                              Stroke="#FFFFFF" StrokeThickness="1.2" Fill="Transparent"/>
+
+                        <!-- IC Chip square with double boundary and contact pads -->
+                        <Rectangle Canvas.Left="205" Canvas.Top="26" Width="48" Height="48"
+                                   Stroke="#FFFFFF" StrokeThickness="1.4" Fill="Transparent"/>
+                        <Rectangle Canvas.Left="212" Canvas.Top="33" Width="34" Height="34"
+                                   Stroke="#FFFFFF" StrokeThickness="1" Fill="#20FFFFFF"/>
+
+                        <!-- Via dots around chip -->
+                        <Ellipse Canvas.Left="198" Canvas.Top="30" Width="3" Height="3" Fill="#FFFFFF"/>
+                        <Ellipse Canvas.Left="198" Canvas.Top="45" Width="3" Height="3" Fill="#FFFFFF"/>
+                        <Ellipse Canvas.Left="198" Canvas.Top="60" Width="3" Height="3" Fill="#FFFFFF"/>
+                        <Ellipse Canvas.Left="257" Canvas.Top="30" Width="3" Height="3" Fill="#FFFFFF"/>
+                        <Ellipse Canvas.Left="257" Canvas.Top="45" Width="3" Height="3" Fill="#FFFFFF"/>
+                        <Ellipse Canvas.Left="257" Canvas.Top="60" Width="3" Height="3" Fill="#FFFFFF"/>
+
+                        <!-- Dense circuit trace lines radiating across card -->
+                        <Path Data="M0,15 L70,15 L95,40 L195,40
+                                    M0,35 L40,35 L65,60 L140,60 L160,80 L205,80
+                                    M0,55 L30,55 L50,75 L120,75
+                                    M0,85 L80,85 L105,60 L130,60
+                                    M180,5 L215,5 L215,26
+                                    M230,5 L230,26
+                                    M245,5 L245,26
+                                    M215,74 L215,98
+                                    M230,74 L230,105
+                                    M245,74 L245,98 L275,98
+                                    M253,35 L285,35 L305,15 L350,15
+                                    M253,50 L275,50 L295,70 L350,70
+                                    M253,65 L280,65 L300,85 L350,85
+                                    M145,20 L165,20 L180,35
+                                    M60,10 L80,10 L95,25"
+                              Stroke="#FFFFFF" StrokeThickness="1.2" Fill="Transparent"/>
+
+                        <!-- Circular Via rings with hole -->
+                        <Ellipse Canvas.Left="70" Canvas.Top="13" Width="5" Height="5" Stroke="#FFFFFF" StrokeThickness="1"/>
+                        <Ellipse Canvas.Left="140" Canvas.Top="58" Width="5" Height="5" Stroke="#FFFFFF" StrokeThickness="1"/>
+                        <Ellipse Canvas.Left="285" Canvas.Top="33" Width="5" Height="5" Stroke="#FFFFFF" StrokeThickness="1"/>
+                        <Ellipse Canvas.Left="275" Canvas.Top="48" Width="5" Height="5" Stroke="#FFFFFF" StrokeThickness="1"/>
+                        <Ellipse Canvas.Left="165" Canvas.Top="18" Width="5" Height="5" Stroke="#FFFFFF" StrokeThickness="1"/>
+                    </Canvas>
+
+                    <!-- Soft top-left sheen, kept under the text. -->
+                    <Rectangle IsHitTestVisible="False">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="0.8,1">
+                                <GradientStop Color="#18FFFFFF" Offset="0"/>
+                                <GradientStop Color="#00FFFFFF" Offset="0.55"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+
+                    <!-- Content Layout -->
+                    <Grid Margin="22,12,20,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left: CPU Model Header -->
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{DynamicResource Common_Cpu}" Foreground="#FFFFFF" FontSize="13" FontWeight="Bold"/>
+                            <TextBlock x:Name="TxtCpuModel"
+                                       Text="{DynamicResource Common_NotReported}"
+                                       Foreground="#FFFFFF"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       FlowDirection="LeftToRight"
+                                       Margin="0,3,0,0"/>
+                            <TextBlock x:Name="TxtCpuCores"
+                                       Text=""
+                                       Foreground="#F0F0F0"
+                                       FontSize="12.5"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <!-- Right: Giant Thin Temperature Display with Per-Core Tooltip -->
+                        <Border x:Name="CpuTempHoverZone"
+                                Grid.Column="1"
+                                Background="Transparent"
+                                Cursor="Hand"
+                                MouseEnter="CpuTempHoverZone_MouseEnter"
+                                MouseLeave="CpuTempHoverZone_MouseLeave"
+                                VerticalAlignment="Center">
+                            <Grid>
+                                <Button x:Name="BtnCpuTempCores"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Padding="0"
+                                        Cursor="Hand"
+                                        FocusVisualStyle="{x:Null}"
+                                        AutomationProperties.Name="{DynamicResource Common_Cpu}"
+                                        Click="BtnCpuTempCores_Click"
+                                        GotKeyboardFocus="BtnCpuTempCores_GotKeyboardFocus"
+                                        LostKeyboardFocus="BtnCpuTempCores_LostKeyboardFocus">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="TempFocusBorder" Background="Transparent" CornerRadius="4" Padding="2,0">
+                                                <ContentPresenter/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                                        <Condition Binding="{Binding ShowKeyboardFocusCues, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="True"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter TargetName="TempFocusBorder" Property="BorderBrush" Value="#CCFFFFFF"/>
+                                                    <Setter TargetName="TempFocusBorder" Property="BorderThickness" Value="1"/>
+                                                </MultiDataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" FlowDirection="LeftToRight">
+                                        <TextBlock x:Name="TxtHeroTemp"
+                                                   Text="--"
+                                                   Foreground="#FFFFFF"
+                                                   FontFamily="{StaticResource SegoeUIVariable}"
+                                                   FontSize="64"
+                                                   FontWeight="ExtraLight"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="TxtHeroUnit"
+                                                   Text="°C"
+                                                   Foreground="#FFFFFF"
+                                                   FontSize="17"
+                                                   FontWeight="Light"
+                                                   VerticalAlignment="Bottom"
+                                                   Margin="3,0,0,14"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <!-- Per-Core Speech-Bubble Popup on Hover -->
+                                <Popup x:Name="CpuCoresPopup"
+                                       AllowsTransparency="True"
+                                       Placement="Top"
+                                       PlacementTarget="{Binding ElementName=CpuTempHoverZone}"
+                                       VerticalOffset="6"
+                                       PopupAnimation="Fade"
+                                       IsHitTestVisible="False">
+                                    <Grid Margin="6" IsHitTestVisible="False">
+                                        <Grid.Effect>
+                                            <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.18" Color="#000000"/>
+                                        </Grid.Effect>
+                                        <StackPanel HorizontalAlignment="Right">
+                                            <!-- White Speech Bubble Box -->
+                                            <Border Background="#FFFFFF"
+                                                    BorderBrush="#E2E2E2"
+                                                    BorderThickness="1"
+                                                    CornerRadius="6"
+                                                    SnapsToDevicePixels="True">
+                                                <StackPanel>
+                                                    <ItemsControl ItemsSource="{Binding CoreItems}" FlowDirection="LeftToRight">
+                                                        <ItemsControl.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <UniformGrid Columns="{Binding CoreColumns}"/>
+                                                            </ItemsPanelTemplate>
+                                                        </ItemsControl.ItemsPanel>
+                                                        <ItemsControl.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <Border Background="#FFFFFF"
+                                                                        BorderBrush="#E2E2E2"
+                                                                        BorderThickness="0,0,1,1">
+                                                                    <TextBlock Text="{Binding Text}"
+                                                                               Foreground="#1A1A1A"
+                                                                               FontSize="11.5"
+                                                                               FontFamily="{StaticResource SegoeUIVariableText}"
+                                                                               FontWeight="Normal"
+                                                                               TextAlignment="Center"
+                                                                               Padding="8,5">
+                                                                        <TextBlock.Style>
+                                                                            <Style TargetType="TextBlock">
+                                                                                <Style.Triggers>
+                                                                                    <DataTrigger Binding="{Binding IsHottest}" Value="True">
+                                                                                        <Setter Property="TextDecorations" Value="Underline"/>
+                                                                                    </DataTrigger>
+                                                                                </Style.Triggers>
+                                                                            </Style>
+                                                                        </TextBlock.Style>
+                                                                    </TextBlock>
+                                                                </Border>
+                                                            </DataTemplate>
+                                                        </ItemsControl.ItemTemplate>
+                                                    </ItemsControl>
+                                                    <TextBlock x:Name="TxtCpuCoresUnavailable"
+                                                               Text="{DynamicResource Main_CoreSensorsUnavailable}"
+                                                               Foreground="#333333"
+                                                               FontSize="11.5"
+                                                               FontFamily="{StaticResource SegoeUIVariableText}"
+                                                               Padding="10,7"
+                                                               Visibility="Collapsed"/>
+                                                    <Border x:Name="CpuPackagePowerFooter"
+                                                            BorderBrush="#E2E2E2"
+                                                            BorderThickness="0,1,0,0"
+                                                            Padding="8,5">
+                                                        <TextBlock x:Name="TxtCpuPackagePowerPopup"
+                                                                   Text="Package Power: --W"
+                                                                   Foreground="#333333"
+                                                                   FontSize="11"
+                                                                   FontFamily="{StaticResource SegoeUIVariableText}"/>
+                                                    </Border>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <!-- Downward Triangle Caret pointing directly down over digits -->
+                                            <Canvas Height="6" Width="14" Margin="0,-1,42,0" HorizontalAlignment="Right">
+                                                <Polygon Points="0,0 7,6 14,0" Fill="#FFFFFF" Stroke="#CCCCCC" StrokeThickness="1"/>
+                                                <Line X1="1" Y1="0" X2="13" Y2="0" Stroke="#FFFFFF" StrokeThickness="1.5"/>
+                                            </Canvas>
+                                        </StackPanel>
+                                    </Grid>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- 3. LIVE CPU TEMPERATURE CHART & TIMEFRAME SELECTOR -->
+            <Grid x:Name="CpuLargeChartContainer" Grid.Row="3" Height="76" Margin="18,4,18,0">
+                <Border Background="{DynamicResource ChartBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderStrongBrush}"
+                        BorderThickness="1"
+                        SnapsToDevicePixels="True">
+                    <Grid>
+                        <Canvas x:Name="CpuChartCanvas"
+                                FlowDirection="LeftToRight"
+                                Background="Transparent"
+                                ClipToBounds="True"
+                                SizeChanged="CpuChartCanvas_SizeChanged"
+                                MouseMove="CpuChartCanvas_MouseMove"
+                                MouseLeave="CpuChartCanvas_MouseLeave"/>
+                        <Canvas x:Name="CpuChartHoverCanvas"
+                                FlowDirection="LeftToRight"
+                                IsHitTestVisible="False"
+                                ClipToBounds="True"/>
+                        <TextBlock x:Name="TxtCpuChartUnavailable"
+                                   Text="{DynamicResource Main_CpuSensorsUnavailable}"
+                                   Foreground="{DynamicResource TextTertiaryBrush}"
+                                   FontSize="11"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,0,22"
+                                   IsHitTestVisible="False"
+                                   Visibility="Collapsed"/>
+
+                        <Grid Panel.ZIndex="3"
+                              Height="26"
+                              VerticalAlignment="Bottom"
+                              Background="Transparent"
+                              SnapsToDevicePixels="True">
+                            <ComboBox x:Name="CmbTimeframe"
+                                      Style="{StaticResource TimeframeComboStyle}"
+                                      Width="74"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      SelectionChanged="CmbTimeframe_SelectionChanged">
+                                <ComboBoxItem Content="{DynamicResource Main_Timeframe1}" IsSelected="True"/>
+                                <ComboBoxItem Content="{DynamicResource Main_Timeframe5}"/>
+                                <ComboBoxItem Content="{DynamicResource Main_Timeframe10}"/>
+                                <ComboBoxItem Content="{DynamicResource Main_Timeframe30}"/>
+                                <ComboBoxItem Content="{DynamicResource Main_Timeframe60}"/>
+                            </ComboBox>
+                        </Grid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- 4. COOLING MODE CONTROL ROW -->
+            <Border Grid.Row="4" Background="{DynamicResource WindowBackgroundBrush}" Padding="36,9,18,9" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,1">
+                <Grid>
+                    <!-- Left: Fan Icon + Label -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Vector cooling fan, drawn at 80 px and scaled to 40 px. -->
+                        <Viewbox Width="40" Height="40" Margin="0,0,12,0">
+                            <Grid Width="80" Height="80">
+                                <Border x:Name="FanTile"
+                                        CornerRadius="18"
+                                        BorderThickness="2"
+                                        BorderBrush="#35D7FF">
+                                    <Border.Effect>
+                                        <DropShadowEffect x:Name="FanGlowEffect"
+                                                          BlurRadius="14"
+                                                          ShadowDepth="0"
+                                                          Opacity="0.55"
+                                                          Color="#35D7FF"/>
+                                    </Border.Effect>
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop x:Name="FanTileStop1" Color="#071A2B" Offset="0"/>
+                                            <GradientStop x:Name="FanTileStop2" Color="#0B2A40" Offset="0.55"/>
+                                            <GradientStop x:Name="FanTileStop3" Color="#071722" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <Grid>
+                                        <!-- Subtle corner traces keep the tile from reading as a plain badge. -->
+                                        <Path x:Name="FanCircuitTraces"
+                                              Data="M14,2 L14,9 L5,18 M66,2 L66,9 L75,18 M14,78 L14,71 L5,62 M66,78 L66,71 L75,62"
+                                              Stroke="#1F9FC4"
+                                              StrokeThickness="1"
+                                              Opacity="0.4"/>
+
+                                        <Ellipse x:Name="FanOuterRing"
+                                                 Margin="7"
+                                                 Stroke="#55E6FF"
+                                                 StrokeThickness="2"
+                                                 Opacity="0.9"/>
+                                        <Ellipse x:Name="FanInnerRing"
+                                                 Margin="12"
+                                                 Stroke="#1A7A99"
+                                                 StrokeThickness="1.4"/>
+
+                                        <Path x:Name="FanRimDots" Fill="#8FF4FF" Opacity="0.9">
+                                            <Path.Data>
+                                                <GeometryGroup>
+                                                    <EllipseGeometry Center="40,8.4" RadiusX="1.6" RadiusY="1.6"/>
+                                                    <EllipseGeometry Center="40,71.6" RadiusX="1.6" RadiusY="1.6"/>
+                                                    <EllipseGeometry Center="8.4,40" RadiusX="1.6" RadiusY="1.6"/>
+                                                    <EllipseGeometry Center="71.6,40" RadiusX="1.6" RadiusY="1.6"/>
+                                                </GeometryGroup>
+                                            </Path.Data>
+                                        </Path>
+
+                                        <Canvas x:Name="FanRotor"
+                                                Width="60" Height="60"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                RenderTransformOrigin="0.5,0.5">
+                                            <Canvas.RenderTransform>
+                                                <RotateTransform x:Name="FanRotation" Angle="0"/>
+                                            </Canvas.RenderTransform>
+
+                                            <Path x:Name="FanPetals"
+                                                  Stroke="#C8F7FF"
+                                                  StrokeThickness="0.9"
+                                                  StrokeLineJoin="Round">
+                                                <Path.Fill>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop x:Name="FanPetalStop1" Color="#E9FDFF" Offset="0"/>
+                                                        <GradientStop x:Name="FanPetalStop2" Color="#9DE8FF" Offset="0.5"/>
+                                                        <GradientStop x:Name="FanPetalStop3" Color="#3FAFD9" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Path.Fill>
+                                                <Path.Data>
+                                                    <GeometryGroup FillRule="Nonzero">
+                                                        <PathGeometry Figures="M30,23.2 C20.4,18.0 19.2,8.8 26.0,4.0 C28.0,2.2 32.0,2.2 34.0,4.0 C40.8,8.8 39.6,18.0 30,23.2 Z">
+                                                            <PathGeometry.Transform><RotateTransform Angle="0" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,23.2 C20.4,18.0 19.2,8.8 26.0,4.0 C28.0,2.2 32.0,2.2 34.0,4.0 C40.8,8.8 39.6,18.0 30,23.2 Z">
+                                                            <PathGeometry.Transform><RotateTransform Angle="60" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,23.2 C20.4,18.0 19.2,8.8 26.0,4.0 C28.0,2.2 32.0,2.2 34.0,4.0 C40.8,8.8 39.6,18.0 30,23.2 Z">
+                                                            <PathGeometry.Transform><RotateTransform Angle="120" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,23.2 C20.4,18.0 19.2,8.8 26.0,4.0 C28.0,2.2 32.0,2.2 34.0,4.0 C40.8,8.8 39.6,18.0 30,23.2 Z">
+                                                            <PathGeometry.Transform><RotateTransform Angle="180" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,23.2 C20.4,18.0 19.2,8.8 26.0,4.0 C28.0,2.2 32.0,2.2 34.0,4.0 C40.8,8.8 39.6,18.0 30,23.2 Z">
+                                                            <PathGeometry.Transform><RotateTransform Angle="240" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,23.2 C20.4,18.0 19.2,8.8 26.0,4.0 C28.0,2.2 32.0,2.2 34.0,4.0 C40.8,8.8 39.6,18.0 30,23.2 Z">
+                                                            <PathGeometry.Transform><RotateTransform Angle="300" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                    </GeometryGroup>
+                                                </Path.Data>
+                                            </Path>
+
+                                            <Path x:Name="FanPetalVeins"
+                                                  Stroke="#E8FFFF"
+                                                  StrokeThickness="0.7"
+                                                  Opacity="0.55"
+                                                  StrokeLineJoin="Round">
+                                                <Path.Data>
+                                                    <GeometryGroup>
+                                                        <PathGeometry Figures="M30,22.0 L30,5.6">
+                                                            <PathGeometry.Transform><RotateTransform Angle="0" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,22.0 L30,5.6">
+                                                            <PathGeometry.Transform><RotateTransform Angle="60" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,22.0 L30,5.6">
+                                                            <PathGeometry.Transform><RotateTransform Angle="120" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,22.0 L30,5.6">
+                                                            <PathGeometry.Transform><RotateTransform Angle="180" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,22.0 L30,5.6">
+                                                            <PathGeometry.Transform><RotateTransform Angle="240" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                        <PathGeometry Figures="M30,22.0 L30,5.6">
+                                                            <PathGeometry.Transform><RotateTransform Angle="300" CenterX="30" CenterY="30"/></PathGeometry.Transform>
+                                                        </PathGeometry>
+                                                    </GeometryGroup>
+                                                </Path.Data>
+                                            </Path>
+
+                                            <Ellipse x:Name="FanHubOuter"
+                                                     Width="24" Height="24"
+                                                     Canvas.Left="18" Canvas.Top="18"
+                                                     Fill="#2A1A0C"
+                                                     Stroke="#F7B45E"
+                                                     StrokeThickness="2.4"/>
+                                            <Ellipse x:Name="FanHubInner"
+                                                     Width="14" Height="14"
+                                                     Canvas.Left="23" Canvas.Top="23"
+                                                     Fill="#070B10"
+                                                     Stroke="#F3C765"
+                                                     StrokeThickness="1.4"/>
+                                            <Ellipse x:Name="FanHubGlint"
+                                                     Width="3.4" Height="3.4"
+                                                     Canvas.Left="19.8" Canvas.Top="19.8"
+                                                     Fill="#FFFFFF"
+                                                     Opacity="0.45"/>
+                                            <Ellipse x:Name="FanPetalGlint"
+                                                     Width="3" Height="3"
+                                                     Canvas.Left="28.5" Canvas.Top="2.8"
+                                                     Fill="#FFFFFF"
+                                                     Opacity="0.8"/>
+                                        </Canvas>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Viewbox>
+
+                        <TextBlock Text="{DynamicResource Main_CoolingMode}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Right: Info + Smooth Animated Pill Toggle Switch matching Camomile -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Border Background="Transparent"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                Cursor="Help"
+                                ToolTip="{DynamicResource Main_CoolingHelp}">
+                            <Grid Width="14" Height="14">
+                                <Ellipse Stroke="{DynamicResource TextTertiaryBrush}" StrokeThickness="1"/>
+                                <TextBlock Text="i"
+                                           Foreground="{DynamicResource TextTertiaryBrush}"
+                                           FontFamily="Georgia"
+                                           FontSize="9"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Margin="0,-1,0,0"/>
+                            </Grid>
+                        </Border>
+
+                        <Button x:Name="BtnCoolingToggle"
+                                VerticalAlignment="Center"
+                                Cursor="Hand"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="0"
+                                FocusVisualStyle="{x:Null}"
+                                AutomationProperties.Name="{DynamicResource Main_CoolingMode}"
+                                Click="BtnCoolingToggle_Click">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="CoolingFocusRing" CornerRadius="13" Padding="1" BorderThickness="1" BorderBrush="Transparent">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                                <Condition Binding="{Binding ShowKeyboardFocusCues, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="True"/>
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter TargetName="CoolingFocusRing" Property="BorderBrush" Value="{DynamicResource WindowBorderBrush}"/>
+                                        </MultiDataTrigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <Border x:Name="TogglePillBorder"
+                                    Width="48" Height="24"
+                                    CornerRadius="12"
+                                    Background="{DynamicResource ToggleOffTrackBrush}"
+                                    Padding="2">
+                                <Grid>
+                                    <!-- Text (OFF or ON) -->
+                                    <TextBlock x:Name="TxtToggleState"
+                                               Text="{DynamicResource Common_Off}"
+                                               Foreground="{DynamicResource ToggleOffTextBrush}"
+                                               FontSize="9.5"
+                                               FontWeight="Bold"
+                                               VerticalAlignment="Center"
+                                               HorizontalAlignment="Right"
+                                               Margin="0,0,7,0"/>
+
+                                    <!-- Thumb Knob -->
+                                    <Ellipse x:Name="ToggleThumb"
+                                             Width="20" Height="20"
+                                             Fill="{DynamicResource ToggleOffThumbBrush}"
+                                             HorizontalAlignment="Left"
+                                             Margin="0,0,0,0">
+                                    </Ellipse>
+                                </Grid>
+                            </Border>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 5. HARDWARE TELEMETRY ROWS -->
+            <ScrollViewer Grid.Row="5" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="36,0,18,8">
+
+                    <!-- ROW 1: CPU SPEED -->
+                    <Grid x:Name="CpuSpeedRow" Height="44">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Grid Width="26" Height="26" Margin="0,0,10,0">
+                                <!-- Chip outline with clock waves, no surrounding badge. -->
+                                <Path Data="M4,4 L16,4 L16,16 L4,16 Z
+                                            M6,7 C7,6 8,8 9,7 C10,6 11,8 12,7 C13,6 14,8 15,7
+                                            M6,10 C7,9 8,11 9,10 C10,9 11,11 12,10 C13,9 14,11 15,10
+                                            M6,13 C7,12 8,14 9,13 C10,12 11,14 12,13 C13,12 14,14 15,13"
+                                      Stroke="{DynamicResource TextTitleBrush}" StrokeThickness="1.2" StrokeLineJoin="Round" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            <TextBlock Text="{DynamicResource Main_LabelCpuSpeed}" Foreground="{DynamicResource TextTitleBrush}" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" FlowDirection="LeftToRight">
+                            <Border Background="{DynamicResource CardBackgroundBrush}" BorderBrush="{DynamicResource BorderSubtleBrush}" BorderThickness="1" CornerRadius="3" Padding="10,4" Margin="0,0,6,0">
+                                <TextBlock x:Name="TxtCpuClockRatio" Text="-- / --" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Background="Transparent" BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1" CornerRadius="3" Padding="7,4">
+                                <TextBlock Text="{DynamicResource Main_LabelGhz}" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="11" FontWeight="SemiBold"/>
+                            </Border>
+                            <TextBlock x:Name="TxtCpuPackageWatts"
+                                       Text="--W"
+                                       Foreground="{DynamicResource TextTertiaryBrush}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       FlowDirection="LeftToRight"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Rectangle x:Name="CpuSpeedSeparator" Height="1" Fill="{DynamicResource DividerBrush}" Margin="0,1"/>
+
+                    <!-- ROW 1B: RAM USAGE -->
+                    <Grid x:Name="RamRow" Height="44">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid x:Name="RamTelemetryZone" Grid.Column="0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Grid Width="26" Height="26" Margin="0,0,10,0">
+                                    <Path Data="M3,6 L17,6 L17,13 L3,13 Z M5,13 L5,16 M8,13 L8,16 M12,13 L12,16 M15,13 L15,16 M6,8 L8,8 L8,11 L6,11 Z M11,8 L14,8 L14,11 L11,11 Z"
+                                          Stroke="{DynamicResource TextTitleBrush}" StrokeThickness="1.2" StrokeLineJoin="Round" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                                <TextBlock Text="{DynamicResource Main_LabelRam}" Foreground="{DynamicResource TextTitleBrush}" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" FlowDirection="LeftToRight">
+                                <Button x:Name="BtnRamBreakdown"
+                                        Click="BtnRamBreakdown_Click"
+                                        LostKeyboardFocus="BtnRamBreakdown_LostKeyboardFocus"
+                                        ToolTipService.InitialShowDelay="200"
+                                        ToolTipService.ShowDuration="60000"
+                                        ToolTipService.BetweenShowDelay="0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Padding="0"
+                                        Cursor="Hand"
+                                        FocusVisualStyle="{x:Null}"
+                                        Margin="0,0,5,0"
+                                        AutomationProperties.Name="{DynamicResource Ram_TooltipTitle}">
+                                    <Button.ToolTip>
+                                        <ToolTip x:Name="RamBreakdownToolTip"
+                                                 Style="{StaticResource RamToolTipStyle}"
+                                                 Placement="Top"
+                                                 VerticalOffset="-6"
+                                                 Opened="RamBreakdownToolTip_Opened"
+                                                 Closed="RamBreakdownToolTip_Closed">
+                                            <StackPanel MinWidth="242">
+                                                <!-- Header -->
+                                                <Grid Margin="0,0,0,7">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0"
+                                                               Text="{DynamicResource Ram_TooltipTitle}"
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                                               FontSize="12"
+                                                               FontWeight="SemiBold"
+                                                               VerticalAlignment="Center"/>
+                                                    <TextBlock x:Name="TxtTipInstalled"
+                                                               Grid.Column="1"
+                                                               Text="Installed: --"
+                                                               Foreground="{DynamicResource TextDimBrush}"
+                                                               FontSize="11"
+                                                               Margin="16,0,0,0"
+                                                               VerticalAlignment="Center"/>
+                                                </Grid>
+
+                                                <!-- 4px Mini Stacked Bar -->
+                                                <Border Height="4" Background="{DynamicResource CardAltBackgroundBrush}" CornerRadius="2" ClipToBounds="True" Margin="0,0,0,9" FlowDirection="LeftToRight">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition x:Name="TipBarInUseCol" Width="0*"/>
+                                                            <ColumnDefinition x:Name="TipBarModifiedCol" Width="0*"/>
+                                                            <ColumnDefinition x:Name="TipBarStandbyCol" Width="0*"/>
+                                                            <ColumnDefinition x:Name="TipBarFreeCol" Width="1*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Rectangle Grid.Column="0" Fill="{DynamicResource RamAccentBrush}"/>
+                                                        <Rectangle Grid.Column="1" Fill="{DynamicResource WarningTextBrush}"/>
+                                                        <Rectangle Grid.Column="2" Fill="#546E7A"/>
+                                                        <Rectangle Grid.Column="3" Fill="{DynamicResource CardAltBackgroundBrush}"/>
+                                                    </Grid>
+                                                </Border>
+
+                                                <!-- Breakdown Table -->
+                                                <Grid Margin="0,0,0,7">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+
+                                                    <!-- In Use -->
+                                                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0,1.5">
+                                                        <Ellipse Width="6" Height="6" Fill="{DynamicResource RamAccentBrush}" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                                                        <TextBlock Text="{DynamicResource Ram_InUse}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11.5"/>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="TxtTipInUse" Grid.Row="0" Grid.Column="1" Text="--" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11.5" FontWeight="SemiBold" FlowDirection="LeftToRight" HorizontalAlignment="Right" Margin="16,1.5,0,1.5"/>
+
+                                                    <!-- Available -->
+                                                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,1.5">
+                                                        <Ellipse Width="6" Height="6" Fill="#8CAAB8" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                                                        <TextBlock Text="{DynamicResource Ram_Available}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11.5"/>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="TxtTipAvailable" Grid.Row="1" Grid.Column="1" Text="--" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11.5" FlowDirection="LeftToRight" HorizontalAlignment="Right" Margin="16,1.5,0,1.5"/>
+
+                                                    <!-- Free -->
+                                                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0,1.5">
+                                                        <Ellipse Width="6" Height="6" Fill="{DynamicResource CardAltBackgroundBrush}" Stroke="{DynamicResource TextTertiaryBrush}" StrokeThickness="1" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                                                        <TextBlock Text="{DynamicResource Ram_Free}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11.5"/>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="TxtTipFree" Grid.Row="2" Grid.Column="1" Text="--" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11.5" FlowDirection="LeftToRight" HorizontalAlignment="Right" Margin="16,1.5,0,1.5"/>
+
+                                                    <!-- Standby -->
+                                                    <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="0,1.5">
+                                                        <Ellipse Width="6" Height="6" Fill="#546E7A" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                                                        <TextBlock Text="{DynamicResource Ram_Standby}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11.5"/>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="TxtTipStandby" Grid.Row="3" Grid.Column="1" Text="--" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11.5" FlowDirection="LeftToRight" HorizontalAlignment="Right" Margin="16,1.5,0,1.5"/>
+
+                                                    <!-- Modified -->
+                                                    <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" Margin="0,1.5">
+                                                        <Ellipse Width="6" Height="6" Fill="{DynamicResource WarningTextBrush}" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                                                        <TextBlock Text="{DynamicResource Ram_Modified}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11.5"/>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="TxtTipModified" Grid.Row="4" Grid.Column="1" Text="--" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11.5" FlowDirection="LeftToRight" HorizontalAlignment="Right" Margin="16,1.5,0,1.5"/>
+
+                                                    <!-- Cached -->
+                                                    <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" Margin="0,1.5">
+                                                        <Ellipse Width="6" Height="6" Fill="#6D8A96" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                                                        <TextBlock Text="{DynamicResource Ram_Cached}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11.5"/>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="TxtTipCached" Grid.Row="5" Grid.Column="1" Text="--" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="11.5" FlowDirection="LeftToRight" HorizontalAlignment="Right" Margin="16,1.5,0,1.5"/>
+
+                                                    <!-- Hardware Reserved -->
+                                                    <StackPanel Grid.Row="6" Grid.Column="0" Orientation="Horizontal" Margin="0,1.5">
+                                                        <Ellipse Width="6" Height="6" Fill="#787878" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                                                        <TextBlock Text="{DynamicResource Ram_HardwareReserved}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11.5"/>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="TxtTipReserved" Grid.Row="6" Grid.Column="1" Text="--" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11.5" FlowDirection="LeftToRight" HorizontalAlignment="Right" Margin="16,1.5,0,1.5"/>
+                                                </Grid>
+
+                                                <Rectangle Height="1" Fill="{DynamicResource DividerBrush}" Margin="0,0,0,6"/>
+                                                <TextBlock x:Name="TxtTipFooter"
+                                                           Text="{DynamicResource Ram_FooterHint}"
+                                                           Foreground="{DynamicResource TextDimBrush}"
+                                                           FontSize="11"
+                                                           TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </Button.ToolTip>
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="RamPillBdr"
+                                                    Background="{DynamicResource CardBackgroundBrush}"
+                                                    BorderBrush="{DynamicResource BorderSubtleBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="3"
+                                                    Padding="9,4">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="RamPillBdr" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                                    <Setter TargetName="RamPillBdr" Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}"/>
+                                                </Trigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                                        <Condition Binding="{Binding ShowKeyboardFocusCues, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="True"/>
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter TargetName="RamPillBdr" Property="BorderBrush" Value="{DynamicResource WindowBorderBrush}"/>
+                                                </MultiDataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                    <TextBlock x:Name="TxtRamRatio" Text="-- / --" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12" FontWeight="SemiBold"/>
+                                </Button>
+                                <Border Background="Transparent" BorderBrush="{DynamicResource InputBorderBrush}" BorderThickness="1" CornerRadius="3" Padding="6,4">
+                                    <TextBlock Text="{DynamicResource Main_LabelGb}" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="11" FontWeight="SemiBold"/>
+                                </Border>
+                                <TextBlock x:Name="TxtRamPercent"
+                                           Text="--%"
+                                           Foreground="{DynamicResource TextTertiaryBrush}"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           FlowDirection="LeftToRight"
+                                           VerticalAlignment="Center"
+                                           MinWidth="29"
+                                           TextAlignment="Right"
+                                           Margin="6,0,0,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Compact Split Action Button: Optimize RAM + Scope Dropdown -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0,0,0" FlowDirection="LeftToRight">
+                            <Button x:Name="BtnOptimizeRam"
+                                    Width="26" Height="26"
+                                    Click="BtnOptimizeRam_Click"
+                                    ToolTip="{DynamicResource Ram_OptimizeButtonTooltip}"
+                                    Cursor="Hand"
+                                    FocusVisualStyle="{x:Null}"
+                                    AutomationProperties.Name="{DynamicResource Ram_OptimizeAutomation}">
+                                <Button.ContextMenu>
+                                    <ContextMenu x:Name="RamScopeMenu"
+                                                 Style="{StaticResource RamDarkContextMenuStyle}"
+                                                 Opened="RamScopeMenu_Opened">
+                                        <MenuItem x:Name="MenuRamFreeWorkingSets"
+                                                  Header="{DynamicResource Ram_MenuFreeWorkingSets}"
+                                                  IsCheckable="True"
+                                                  Click="MenuRamScope_Click"/>
+                                        <MenuItem x:Name="MenuRamClearStandby"
+                                                  Header="{DynamicResource Ram_MenuClearStandby}"
+                                                  IsCheckable="True"
+                                                  Click="MenuRamScope_Click"/>
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="OptBdr"
+                                                Background="{DynamicResource CardAltBackgroundBrush}"
+                                                BorderBrush="{DynamicResource BorderStrongBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="3,0,0,3">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="OptBdr" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                                <Setter TargetName="OptBdr" Property="BorderBrush" Value="{DynamicResource MenuBorderBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="OptBdr" Property="Background" Value="{DynamicResource PanelBackgroundBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter TargetName="OptBdr" Property="Opacity" Value="0.72"/>
+                                            </Trigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                                    <Condition Binding="{Binding ShowKeyboardFocusCues, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="True"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="OptBdr" Property="BorderBrush" Value="{DynamicResource WindowBorderBrush}"/>
+                                            </MultiDataTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                                <Grid x:Name="OptGlyphHost" Width="13" Height="13">
+                                    <Path x:Name="RamCleanIcon"
+                                          Data="M10.5,1.5 L7.2,6.2 L4.5,6.2 L2.5,12.5 L6.8,12.5 L7.5,10.2 L8.3,12.5 L11.5,12.5 L9.8,6.2 L12,3 Z M4.6,7.6 L9.3,7.6"
+                                          Stroke="{DynamicResource TextPrimaryBrush}"
+                                          StrokeThickness="1.2"
+                                          StrokeLineJoin="Round"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          Width="13" Height="13" Stretch="Uniform"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Path x:Name="RamCheckIcon"
+                                          Data="M2,7 L5.5,10.5 L12,3.5"
+                                          Stroke="{DynamicResource RamAccentBrush}"
+                                          StrokeThickness="1.7"
+                                          StrokeLineJoin="Round"
+                                          StrokeStartLineCap="Round"
+                                          StrokeEndLineCap="Round"
+                                          Width="13" Height="13" Stretch="Uniform"
+                                          Visibility="Collapsed"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Button>
+
+                            <Button x:Name="BtnOptimizeRamMenu"
+                                    Width="16" Height="26"
+                                    Margin="-1,0,0,0"
+                                    Click="BtnOptimizeRamMenu_Click"
+                                    ToolTip="{DynamicResource Ram_OptimizeOptionsAutomation}"
+                                    Cursor="Hand"
+                                    FocusVisualStyle="{x:Null}"
+                                    AutomationProperties.Name="{DynamicResource Ram_OptimizeOptionsAutomation}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border x:Name="ChevBdr"
+                                                Background="{DynamicResource CardAltBackgroundBrush}"
+                                                BorderBrush="{DynamicResource BorderStrongBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="0,3,3,0">
+                                            <Path Data="M0,0 L3.5,3.5 L7,0"
+                                                  Stroke="{DynamicResource TextSecondaryBrush}"
+                                                  StrokeThickness="1.3"
+                                                  StrokeLineJoin="Round"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="ChevBdr" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                                <Setter TargetName="ChevBdr" Property="BorderBrush" Value="{DynamicResource MenuBorderBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="ChevBdr" Property="Background" Value="{DynamicResource PanelBackgroundBrush}"/>
+                                            </Trigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsKeyboardFocused, RelativeSource={RelativeSource TemplatedParent}}" Value="True"/>
+                                                    <Condition Binding="{Binding ShowKeyboardFocusCues, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="True"/>
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter TargetName="ChevBdr" Property="BorderBrush" Value="{DynamicResource WindowBorderBrush}"/>
+                                            </MultiDataTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Ultra-thin 2px RAM breakdown indicator along the divider -->
+                    <Border x:Name="RamSeparator"
+                            Height="2"
+                            Margin="0,0.5"
+                            Background="{DynamicResource CardAltBackgroundBrush}"
+                            CornerRadius="1"
+                            ClipToBounds="True"
+                            FlowDirection="LeftToRight">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="RamBarInUseCol" Width="0*"/>
+                                <ColumnDefinition x:Name="RamBarStandbyCol" Width="0*"/>
+                                <ColumnDefinition x:Name="RamBarFreeCol" Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <Rectangle Grid.Column="0" Fill="{DynamicResource RamAccentBrush}"/>
+                            <Rectangle Grid.Column="1" Fill="#546E7A"/>
+                            <Rectangle Grid.Column="2" Fill="{DynamicResource CardAltBackgroundBrush}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- ROW 1C: SMALL CPU TEMPERATURE GRAPH -->
+                    <Grid x:Name="CpuSmallChartRow" Height="50" Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Grid Width="26" Height="26" Margin="0,0,10,0">
+                                <Path Data="M4,4 L16,4 L16,16 L4,16 Z
+                                            M7,1.5 L7,4 M10,1.5 L10,4 M13,1.5 L13,4
+                                            M7,16 L7,18.5 M10,16 L10,18.5 M13,16 L13,18.5
+                                            M1.5,7 L4,7 M1.5,10 L4,10 M1.5,13 L4,13
+                                            M16,7 L18.5,7 M16,10 L18.5,10 M16,13 L18.5,13
+                                            M6,10.5 L8,10.5 L9.3,7.2 L11,13.2 L12.2,10.5 L14,10.5"
+                                      Stroke="{DynamicResource TextTitleBrush}" StrokeThickness="1.15" StrokeLineJoin="Round" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            <TextBlock x:Name="TxtCpuSmallLabel"
+                                       Text="{DynamicResource Common_Cpu}"
+                                       Foreground="{DynamicResource TextTitleBrush}"
+                                       FontSize="12.5"
+                                       FontWeight="SemiBold"
+                                       FlowDirection="LeftToRight"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Border Grid.Column="1" HorizontalAlignment="Right" Width="238" Height="36" Background="{DynamicResource InsetBackgroundBrush}" BorderBrush="{DynamicResource BorderStrongBrush}" BorderThickness="1" CornerRadius="0" VerticalAlignment="Center" FlowDirection="LeftToRight">
+                            <Grid>
+                                <Canvas x:Name="CpuSmallChartCanvas"
+                                        FlowDirection="LeftToRight"
+                                        Background="Transparent"
+                                        ClipToBounds="True"
+                                        SizeChanged="CpuSmallChartCanvas_SizeChanged"
+                                        MouseMove="CpuSmallChartCanvas_MouseMove"
+                                        MouseLeave="CpuSmallChartCanvas_MouseLeave"/>
+                                <Canvas x:Name="CpuSmallChartHoverCanvas"
+                                        FlowDirection="LeftToRight"
+                                        IsHitTestVisible="False"
+                                        ClipToBounds="True"/>
+                                <TextBlock x:Name="TxtCpuSmallChartUnavailable"
+                                           Text="{DynamicResource Main_CpuSensorsUnavailable}"
+                                           Foreground="{DynamicResource TextTertiaryBrush}"
+                                           FontSize="10.5"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           IsHitTestVisible="False"
+                                           Visibility="Collapsed"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <Rectangle x:Name="CpuSmallChartSeparator" Height="1" Fill="{DynamicResource DividerBrush}" Margin="0,1" Visibility="Collapsed"/>
+
+                    <!-- ROW 2: GPU (Nvidia / AMD / Intel) -->
+                    <Grid Height="56">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Grid Width="26" Height="26" Margin="0,0,10,0">
+                                <!-- Display with a fan and output lines, no surrounding badge. -->
+                                <Path Data="M2,4 L18,4 L18,16 L2,16 Z
+                                            M5,10 A3,3 0 1,0 11,10 A3,3 0 1,0 5,10 Z
+                                            M8,10 L8,7 M8,10 L11,10
+                                            M13,8 L16,8 M13,11 L16,11 M13,14 L16,14"
+                                      Stroke="{DynamicResource TextTitleBrush}" StrokeThickness="1.2" StrokeLineJoin="Round" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock x:Name="TxtGpuLabel" Text="{DynamicResource Main_GpuLabel}" Foreground="{DynamicResource TextTitleBrush}" FontSize="12.5" FontWeight="SemiBold"/>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,1,0,0">
+                                    <TextBlock x:Name="TxtGpuVendor"
+                                               Text=""
+                                               Foreground="{DynamicResource TextTertiaryBrush}"
+                                               FontSize="10.5"
+                                               FlowDirection="LeftToRight"
+                                               VerticalAlignment="Center"
+                                               Visibility="Collapsed"/>
+                                    <TextBlock x:Name="TxtGpuTemp"
+                                               Text="--°C"
+                                               Foreground="{DynamicResource TextTertiaryBrush}"
+                                               FontSize="10.5"
+                                               FontWeight="SemiBold"
+                                               FlowDirection="LeftToRight"
+                                               VerticalAlignment="Center"
+                                               Margin="8,0,0,0"/>
+                                    <TextBlock x:Name="TxtGpuPower"
+                                               Text="--W"
+                                               Foreground="{DynamicResource TextTertiaryBrush}"
+                                               FontSize="10.5"
+                                               FontWeight="SemiBold"
+                                               FlowDirection="LeftToRight"
+                                               VerticalAlignment="Center"
+                                               Margin="6,0,0,0"/>
+                                </StackPanel>
+                                <TextBlock x:Name="TxtGpuName"
+                                           Text=""
+                                           Foreground="{DynamicResource TextMutedBrush}"
+                                           FontSize="10"
+                                           FlowDirection="LeftToRight"
+                                           MaxWidth="112"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,1,0,0"
+                                           Visibility="Collapsed"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Border Grid.Column="1" HorizontalAlignment="Right" Width="238" Height="36" Background="{DynamicResource InsetBackgroundBrush}" BorderBrush="{DynamicResource BorderStrongBrush}" BorderThickness="1" CornerRadius="0" VerticalAlignment="Center" FlowDirection="LeftToRight">
+                            <Grid>
+                                <Canvas x:Name="GpuChartCanvas"
+                                        FlowDirection="LeftToRight"
+                                        Background="Transparent"
+                                        ClipToBounds="True"
+                                        MouseMove="GpuChartCanvas_MouseMove"
+                                        MouseLeave="GpuChartCanvas_MouseLeave"/>
+                                <Canvas x:Name="GpuChartHoverCanvas"
+                                        FlowDirection="LeftToRight"
+                                        IsHitTestVisible="False"
+                                        ClipToBounds="True"/>
+                                <TextBlock x:Name="TxtGpuChartUnavailable"
+                                           Text="{DynamicResource Main_GpuSensorsUnavailable}"
+                                           Foreground="{DynamicResource TextTertiaryBrush}"
+                                           FontSize="10.5"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           IsHitTestVisible="False"
+                                           Visibility="Collapsed"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- GPU health details, visible only when a View-tab readout is enabled. -->
+                    <Grid x:Name="GpuHealthRow" Height="26" Visibility="Collapsed" Margin="36,0,0,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" FlowDirection="LeftToRight">
+                            <StackPanel x:Name="GpuHotspotGroup" Orientation="Horizontal" Margin="0,0,16,0">
+                                <TextBlock Text="{DynamicResource Main_GpuHotspotLabel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10"/>
+                                <TextBlock x:Name="TxtGpuHotspot" Text="--" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10.5" FontWeight="SemiBold" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel x:Name="GpuVramGroup" Orientation="Horizontal" Margin="0,0,16,0">
+                                <TextBlock Text="{DynamicResource Main_GpuVramLabel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10"/>
+                                <TextBlock x:Name="TxtGpuVram" Text="--" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10.5" FontWeight="SemiBold" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel x:Name="GpuFanGroup" Orientation="Horizontal">
+                                <TextBlock Text="{DynamicResource Main_GpuFanLabel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10"/>
+                                <TextBlock x:Name="TxtGpuFan" Text="--" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10.5" FontWeight="SemiBold" Margin="4,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- GPU detail expansion, hidden unless enabled in Settings > View. -->
+                    <Grid x:Name="GpuDetailsRow" Height="26" Visibility="Collapsed" Margin="36,0,0,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" FlowDirection="LeftToRight">
+                            <StackPanel x:Name="GpuVramUsageGroup" Orientation="Horizontal" Margin="0,0,16,0">
+                                <TextBlock Text="{DynamicResource Main_GpuVramUsageLabel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10"/>
+                                <TextBlock x:Name="TxtGpuVramUsage" Text="--" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10.5" FontWeight="SemiBold" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel x:Name="GpuClocksGroup" Orientation="Horizontal" Margin="0,0,16,0">
+                                <TextBlock Text="{DynamicResource Main_GpuClocksLabel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10"/>
+                                <TextBlock x:Name="TxtGpuClocks" Text="--" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10.5" FontWeight="SemiBold" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel x:Name="GpuThrottleGroup" Orientation="Horizontal">
+                                <TextBlock Text="{DynamicResource Main_GpuThrottleLabel}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10"/>
+                                <TextBlock x:Name="TxtGpuThrottle" Text="--" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10.5" FontWeight="SemiBold" Margin="4,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <Rectangle Height="1" Fill="{DynamicResource DividerBrush}" Margin="0,1"/>
+
+                    <!-- DYNAMIC SSD ROWS CONTAINER -->
+                    <StackPanel x:Name="SsdRowsContainer">
+                    </StackPanel>
+
+                    <!-- ROW: OVERLAY (Unlocked Feature) -->
+                    <Grid x:Name="OverlayRow" Height="44" Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Grid Width="26" Height="26" Margin="0,0,10,0">
+                                <!-- Chip outline with a pulse line, no surrounding badge. -->
+                                <Path Data="M4,4 L16,4 L16,16 L4,16 Z M6,10 L8,10 L9,7 L11,13 L12,10 L14,10"
+                                      Stroke="{DynamicResource TextTitleBrush}" StrokeThickness="1.2" StrokeLineJoin="Round" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            <TextBlock Text="{DynamicResource Main_LabelOverlay}" Foreground="{DynamicResource TextTitleBrush}" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Button Click="BtnOverlay_Click"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Padding="4"
+                                AutomationProperties.Name="{DynamicResource Main_ManageOverlayAutomation}">
+                            <TextBlock Text="{DynamicResource Common_Manage}"
+                                       Foreground="{DynamicResource TextTitleBrush}"
+                                       FontWeight="SemiBold"
+                                       FontSize="12.5"/>
+                        </Button>
+                    </Grid>
+
+                    <Rectangle x:Name="AutopilotSeparator" Height="1" Fill="{DynamicResource DividerBrush}" Margin="0,1" Visibility="Collapsed"/>
+
+                    <!-- ROW: AUTOPILOT (Unlocked Feature) -->
+                    <Grid x:Name="AutopilotRow" Height="44" Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Grid Width="26" Height="26" Margin="0,0,10,0">
+                                <!-- 4-point connected neural cluster, no surrounding badge. -->
+                                <Path Data="M4,4 A1.5,1.5 0 1,0 4,7 A1.5,1.5 0 1,0 4,4 Z
+                                            M12,4 A1.5,1.5 0 1,0 12,7 A1.5,1.5 0 1,0 12,4 Z
+                                            M4,11 A1.5,1.5 0 1,0 4,14 A1.5,1.5 0 1,0 4,11 Z
+                                            M12,11 A1.5,1.5 0 1,0 12,14 A1.5,1.5 0 1,0 12,11 Z
+                                            M4,6 L12,6 M4,12 L12,12 M5,5 L11,13 M5,13 L11,5"
+                                      Stroke="{DynamicResource TextTitleBrush}" StrokeThickness="1.2" StrokeLineJoin="Round" Stretch="Uniform" Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            <TextBlock Text="{DynamicResource Main_LabelAutopilot}" Foreground="{DynamicResource TextTitleBrush}" FontSize="12.5" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <Button Click="BtnAutopilot_Click"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                Padding="4"
+                                AutomationProperties.Name="{DynamicResource Main_ManageAutopilotAutomation}">
+                            <TextBlock Text="{DynamicResource Common_Manage}"
+                                       Foreground="{DynamicResource TextTitleBrush}"
+                                       FontWeight="SemiBold"
+                                       FontSize="12.5"/>
+                        </Button>
+                    </Grid>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <Popup x:Name="CpuChartTooltip"
+                   AllowsTransparency="True"
+                   Placement="Relative"
+                   PopupAnimation="None"
+                   StaysOpen="True"
+                   IsHitTestVisible="False">
+                <Grid Margin="6" IsHitTestVisible="False">
+                    <StackPanel>
+                        <Border Background="#FFFFFF"
+                                BorderBrush="#E2E2E2"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="10,6"
+                                SnapsToDevicePixels="True">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.18" Color="#000000"/>
+                            </Border.Effect>
+                            <StackPanel>
+                                <TextBlock x:Name="TxtCpuChartTooltipValue"
+                                           Text=""
+                                           Foreground="#1A1A1A"
+                                           FontSize="12.5"
+                                           FontWeight="SemiBold"
+                                           FlowDirection="LeftToRight"/>
+                                <TextBlock x:Name="TxtCpuChartTooltipTime"
+                                           Text=""
+                                           Foreground="#333333"
+                                           FontSize="11.5"
+                                           FlowDirection="LeftToRight"
+                                           Margin="0,1,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Polygon Points="0,0 6,6 12,0"
+                                 Fill="#FFFFFF"
+                                 HorizontalAlignment="Center"
+                                 Margin="0,-1,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Popup>
+
+            <Popup x:Name="GpuChartTooltip"
+                   AllowsTransparency="True"
+                   Placement="Relative"
+                   PopupAnimation="None"
+                   StaysOpen="True"
+                   IsHitTestVisible="False">
+                <Grid Margin="6" IsHitTestVisible="False">
+                    <StackPanel>
+                        <Border Background="#FFFFFF"
+                                BorderBrush="#E2E2E2"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="10,6"
+                                SnapsToDevicePixels="True">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.18" Color="#000000"/>
+                            </Border.Effect>
+                            <StackPanel>
+                                <TextBlock x:Name="TxtGpuChartTooltipValue"
+                                           Text=""
+                                           Foreground="#1A1A1A"
+                                           FontSize="12.5"
+                                           FontWeight="SemiBold"
+                                           FlowDirection="LeftToRight"/>
+                                <TextBlock x:Name="TxtGpuChartTooltipTime"
+                                           Text=""
+                                           Foreground="#333333"
+                                           FontSize="11.5"
+                                           FlowDirection="LeftToRight"
+                                           Margin="0,1,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Polygon Points="0,0 6,6 12,0"
+                                 Fill="#FFFFFF"
+                                 HorizontalAlignment="Center"
+                                 Margin="0,-1,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Popup>
+
+            <Popup x:Name="SsdChartTooltip"
+                   AllowsTransparency="True"
+                   Placement="Relative"
+                   PopupAnimation="None"
+                   StaysOpen="True"
+                   IsHitTestVisible="False">
+                <Grid Margin="6" IsHitTestVisible="False">
+                    <StackPanel>
+                        <Border Background="#FFFFFF"
+                                BorderBrush="#E2E2E2"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="10,6"
+                                SnapsToDevicePixels="True">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="8" ShadowDepth="2" Opacity="0.18" Color="#000000"/>
+                            </Border.Effect>
+                            <StackPanel>
+                                <TextBlock x:Name="TxtSsdChartTooltipValue"
+                                           Text=""
+                                           Foreground="#1A1A1A"
+                                           FontSize="12.5"
+                                           FontWeight="SemiBold"
+                                           FlowDirection="LeftToRight"/>
+                                <TextBlock x:Name="TxtSsdChartTooltipTime"
+                                           Text=""
+                                           Foreground="#333333"
+                                           FontSize="11.5"
+                                           FlowDirection="LeftToRight"
+                                           Margin="0,1,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Polygon Points="0,0 6,6 12,0"
+                                 Fill="#FFFFFF"
+                                 HorizontalAlignment="Center"
+                                 Margin="0,-1,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Popup>
+        </Grid>
+    </Border>
+</Window>

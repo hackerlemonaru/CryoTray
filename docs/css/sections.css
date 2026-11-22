@@ -1,0 +1,33 @@
+/* Page section shell and section headings. */
+/* Sections */
+
+.section {
+  padding-block: clamp(64px, 8vw, 108px);
+  border-block-end: 1px solid var(--divider);
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 36px;
+  margin-block-end: 34px;
+}
+
+.section-head > div {
+  min-width: 0;
+}
+
+.section-head .section-copy {
+  max-width: 58ch;
+}
+
+.simulation-note {
+  max-width: 28ch;
+  padding-inline-start: 14px;
+  border-inline-start: 1px solid var(--border);
+  color: var(--text-tertiary);
+  font-size: 11.5px;
+  line-height: 1.55;
+}
+

@@ -1,0 +1,196 @@
+<Window x:Class="CryoTray.Views.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource Main_LabelOverlay}"
+        Height="62" Width="360"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        FontFamily="{StaticResource SegoeUIVariableText}"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+
+    <Border x:Name="OverlaySurface"
+            Background="{DynamicResource OverlayBackgroundBrush}"
+            CornerRadius="31"
+            BorderBrush="{DynamicResource WindowBorderBrush}"
+            BorderThickness="1"
+            Padding="12,5">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.4" Color="Black"/>
+        </Border.Effect>
+
+        <Grid VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Chip icon -->
+            <Path Grid.Column="0"
+                  Data="M4,2 A2,2 0 0,0 2,4 L2,12 A2,2 0 0,0 4,14 L12,14 A2,2 0 0,0 14,12 L14,4 A2,2 0 0,0 12,2 Z M5,4 L11,4 A1,1 0 0,1 12,5 L12,11 A1,1 0 0,1 11,12 L5,12 A1,1 0 0,1 4,11 L4,5 A1,1 0 0,1 5,4 Z"
+                  Fill="{DynamicResource OverlayIconBrush}"
+                  Stretch="Uniform"
+                  Width="14" Height="14"
+                  VerticalAlignment="Center"
+                  Margin="0,0,8,0"/>
+
+            <!-- Live metrics -->
+            <Grid Grid.Column="1" VerticalAlignment="Center" FlowDirection="LeftToRight">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel x:Name="CpuOverlayGroup"
+                                Orientation="Vertical"
+                                VerticalAlignment="Center"
+                                Margin="0,0,12,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{DynamicResource Common_Cpu}"
+                                       Foreground="{DynamicResource OverlayLabelBrush}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock x:Name="TxtCpuTemp"
+                                       Text="--°C"
+                                       Foreground="{DynamicResource CpuAccentBrush}"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Margin="4,0,0,0"
+                                       ToolTip="{DynamicResource Settings_OverlayCpuTemp}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,1,0,0">
+                            <TextBlock x:Name="TxtCpuLoad"
+                                       Text="--%"
+                                       Foreground="{DynamicResource OverlaySecondaryBrush}"
+                                       FontSize="9.5"
+                                       ToolTip="{DynamicResource Settings_OverlayCpuLoad}"/>
+                            <TextBlock x:Name="TxtCpuPower"
+                                       Text="--W"
+                                       Foreground="{DynamicResource OverlaySecondaryBrush}"
+                                       FontSize="9.5"
+                                       Margin="6,0,0,0"
+                                       ToolTip="{DynamicResource Settings_OverlayCpuPower}"/>
+                            <TextBlock x:Name="TxtCpuClock"
+                                       Text="--G"
+                                       Foreground="{DynamicResource OverlaySecondaryBrush}"
+                                       FontSize="9.5"
+                                       Margin="6,0,0,0"
+                                       ToolTip="{DynamicResource Settings_OverlayCpuClock}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel x:Name="GpuOverlayGroup"
+                                Orientation="Vertical"
+                                VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{DynamicResource Common_Gpu}"
+                                       Foreground="{DynamicResource OverlayLabelBrush}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock x:Name="TxtGpuTemp"
+                                       Text="--°C"
+                                       Foreground="{DynamicResource GpuAccentBrush}"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Margin="4,0,0,0"
+                                       ToolTip="{DynamicResource Settings_OverlayGpuTemp}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,1,0,0">
+                            <TextBlock x:Name="TxtGpuLoad"
+                                       Text="--%"
+                                       Foreground="{DynamicResource OverlaySecondaryBrush}"
+                                       FontSize="9.5"
+                                       ToolTip="{DynamicResource Settings_OverlayGpuLoad}"/>
+                            <TextBlock x:Name="TxtGpuPower"
+                                       Text="--W"
+                                       Foreground="{DynamicResource OverlaySecondaryBrush}"
+                                       FontSize="9.5"
+                                       Margin="6,0,0,0"
+                                       ToolTip="{DynamicResource Settings_OverlayGpuPower}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel x:Name="RamOverlayGroup"
+                                Orientation="Vertical"
+                                VerticalAlignment="Center"
+                                Margin="12,0,0,0"
+                                Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{DynamicResource Main_LabelRam}"
+                                       Foreground="{DynamicResource OverlayLabelBrush}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock x:Name="TxtRamUsed"
+                                       Text="--G"
+                                       Foreground="{DynamicResource RamAccentBrush}"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Margin="4,0,0,0"
+                                       ToolTip="{DynamicResource Settings_OverlayShowRam}"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtRamPercent"
+                                   Text="--%"
+                                   Foreground="{DynamicResource OverlaySecondaryBrush}"
+                                   FontSize="9.5"
+                                   Margin="0,1,0,0"
+                                   ToolTip="{DynamicResource Settings_OverlayShowRam}"/>
+                    </StackPanel>
+
+                    <StackPanel x:Name="BatteryOverlayGroup"
+                                Orientation="Vertical"
+                                VerticalAlignment="Center"
+                                Margin="12,0,0,0"
+                                Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{DynamicResource Common_Battery}"
+                                       Foreground="{DynamicResource OverlayLabelBrush}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock x:Name="TxtBatteryPercent"
+                                       Text="--%"
+                                       Foreground="{DynamicResource BatteryAccentBrush}"
+                                       FontSize="12"
+                                       FontWeight="Bold"
+                                       Margin="4,0,0,0"
+                                       ToolTip="{DynamicResource Settings_ShowBatteryStatus}"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtBatteryState"
+                                   Text=""
+                                   Foreground="{DynamicResource OverlaySecondaryBrush}"
+                                   FontSize="9.5"
+                                   Margin="0,1,0,0"
+                                   ToolTip="{DynamicResource Settings_ShowBatteryStatus}"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="TxtOverlayEmpty"
+                               Text="{DynamicResource Overlay_NoMetrics}"
+                               Foreground="{DynamicResource OverlayMutedBrush}"
+                               FontSize="10.5"
+                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"
+                               Visibility="Collapsed"/>
+                </StackPanel>
+            </Grid>
+
+            <!-- Close button -->
+            <Button x:Name="BtnCloseOverlay"
+                    Grid.Column="2"
+                    Click="BtnClose_Click"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Padding="4,0"
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    AutomationProperties.Name="{DynamicResource Overlay_CloseAutomation}">
+                <Path Data="M1,1 L8,8 M8,1 L1,8"
+                      Stroke="{DynamicResource OverlaySecondaryBrush}"
+                      StrokeThickness="1.2"
+                      Width="8" Height="8"
+                      Stretch="Uniform"/>
+            </Button>
+        </Grid>
+    </Border>
+</Window>

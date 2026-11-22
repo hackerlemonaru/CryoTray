@@ -1,0 +1,61 @@
+/* Right-to-left overrides. */
+/* RTL */
+
+[dir="rtl"] body {
+  text-align: start;
+}
+
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] .metric-label {
+  letter-spacing: 0;
+}
+
+[dir="rtl"] .lede,
+[dir="rtl"] .section-copy,
+[dir="rtl"] .feature-copy p {
+  line-height: 1.8;
+}
+
+[dir="rtl"] .switch {
+  width: 68px;
+  margin-inline-start: 0;
+  margin-inline-end: auto;
+}
+
+[dir="rtl"] .switch-track {
+  width: 64px;
+}
+
+[dir="rtl"] .switch[aria-checked="true"] .switch-thumb {
+  transform: translateX(40px);
+}
+
+[dir="rtl"] .cooling-copy {
+  text-align: right;
+}
+
+[dir="rtl"] .overlay-mode {
+  direction: ltr;
+}
+
+[dir="rtl"] .example-tag,
+[dir="rtl"] .stage-label,
+[dir="rtl"] .chart-legend {
+  letter-spacing: 0;
+}
+
+[dir="rtl"] .text-link,
+[dir="rtl"] .btn {
+  text-align: center;
+}
+
+[dir="rtl"] .file-name,
+[dir="rtl"] #checksum-command,
+[dir="rtl"] .release-version,
+[dir="rtl"] .file-name {
+  direction: ltr;
+  text-align: left;
+}
+

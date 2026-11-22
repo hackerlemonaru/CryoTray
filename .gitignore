@@ -1,0 +1,21 @@
+## Visual Studio / .NET build outputs
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+
+## Temp & Cache files
+*.tmp
+*.log
+.cloud-attachments/
+.freebuff/
+*_running.*
+*_old.*
+build-check/*
+publish/
+release/
+Installer/Output/
+cpu-sensors.txt

@@ -1,0 +1,352 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - VERSION
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cryotray-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    env:
+      SIGNING_PFX_BASE64: ${{ secrets.WINDOWS_SIGNING_PFX_BASE64 }}
+      SIGNING_PFX_PASSWORD: ${{ secrets.WINDOWS_SIGNING_PFX_PASSWORD }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read and validate VERSION
+        id: version
+        shell: pwsh
+        run: |
+          $version = (Get-Content -LiteralPath VERSION -Raw).Trim()
+          if ($version -notmatch '^\d+\.\d+\.\d+$') {
+            throw "VERSION must contain exactly three numeric parts."
+          }
+
+          $tag = "v$version"
+          git fetch --tags --force
+          $skip = "false"
+          if (@(git tag --list "$tag").Count -gt 0) {
+            $skip = "true"
+          }
+
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "skip=$skip" >> $env:GITHUB_OUTPUT
+
+          if ($skip -eq "true") {
+            Write-Host "Tag $tag already exists. This run will not publish a release."
+          }
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        shell: pwsh
+        run: dotnet restore CryoTray.csproj
+
+      - name: Build
+        shell: pwsh
+        run: dotnet build CryoTray.csproj -c Release --no-restore
+
+      - name: Run verification tests
+        shell: pwsh
+        run: |
+          dotnet bin\Release\net8.0-windows\CryoTray.dll /test
+          if ($LASTEXITCODE -ne 0) {
+            throw "/test failed with exit code $LASTEXITCODE."
+          }
+          dotnet bin\Release\net8.0-windows\CryoTray.dll /test-updates
+          if ($LASTEXITCODE -ne 0) {
+            throw "/test-updates failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Publish self-contained Windows build
+        if: steps.version.outputs.skip != 'true'
+        shell: pwsh
+        run: |
+          dotnet publish CryoTray.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=false `
+            -p:DebugType=None `
+            -o publish\win-x64
+
+      - name: Sign app executable
+        if: steps.version.outputs.skip != 'true' && env.SIGNING_PFX_BASE64 != ''
+        shell: pwsh
+        run: |
+          $pfxPath = Join-Path $env:RUNNER_TEMP "CryoTray-signing.pfx"
+          [IO.File]::WriteAllBytes(
+            $pfxPath,
+            [Convert]::FromBase64String($env:SIGNING_PFX_BASE64))
+
+          $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" `
+            -Recurse `
+            -Filter signtool.exe `
+            -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -match '\\x64\\' } |
+            Sort-Object {
+              if ($_.FullName -match '\\(\d+\.\d+\.\d+\.\d+)\\') { [version]$Matches[1] } else { [version]'0.0.0.0' }
+            } -Descending |
+            Select-Object -First 1
+
+          if (-not $signtool) {
+            throw "signtool.exe was not found. Install the Windows SDK signing tools."
+          }
+
+          $target = "publish\win-x64\CryoTray.exe"
+          & $signtool.FullName sign `
+            /fd SHA256 `
+            /td SHA256 `
+            /tr http://timestamp.digicert.com `
+            /f $pfxPath `
+            /p $env:SIGNING_PFX_PASSWORD `
+            $target
+
+          $signature = Get-AuthenticodeSignature -LiteralPath $target
+          if ($signature.Status -ne "Valid") {
+            throw "$target signature verification failed: $($signature.Status)."
+          }
+
+          Remove-Item -LiteralPath $pfxPath -Force
+
+      - name: Build Inno Setup installer
+        if: steps.version.outputs.skip != 'true'
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $candidates = @(
+            "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe",
+            "$env:ProgramFiles\Inno Setup 6\ISCC.exe"
+          )
+          $iscc = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+          if (-not $iscc) {
+            $cmd = Get-Command ISCC.exe -ErrorAction SilentlyContinue
+            if ($cmd) { $iscc = $cmd.Source }
+          }
+          if (-not $iscc) {
+            choco install innosetup -y --no-progress
+            $iscc = $candidates | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+          }
+          if (-not $iscc) {
+            throw "ISCC.exe (Inno Setup 6) could not be found."
+          }
+
+          & $iscc "/DAppVersion=$version" Installer\CryoTray.iss
+          if ($LASTEXITCODE -ne 0) {
+            throw "Inno Setup compilation failed with exit code $LASTEXITCODE."
+          }
+
+      - name: Sign installer
+        if: steps.version.outputs.skip != 'true' && env.SIGNING_PFX_BASE64 != ''
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $pfxPath = Join-Path $env:RUNNER_TEMP "CryoTray-signing.pfx"
+          [IO.File]::WriteAllBytes(
+            $pfxPath,
+            [Convert]::FromBase64String($env:SIGNING_PFX_BASE64))
+
+          $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin" `
+            -Recurse `
+            -Filter signtool.exe `
+            -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -match '\\x64\\' } |
+            Sort-Object {
+              if ($_.FullName -match '\\(\d+\.\d+\.\d+\.\d+)\\') { [version]$Matches[1] } else { [version]'0.0.0.0' }
+            } -Descending |
+            Select-Object -First 1
+
+          if (-not $signtool) {
+            throw "signtool.exe was not found. Install the Windows SDK signing tools."
+          }
+
+          $targets = @(
+            "Installer\Output\CryoTray-Setup-$version.exe"
+          )
+          foreach ($target in $targets) {
+            & $signtool.FullName sign `
+              /fd SHA256 `
+              /td SHA256 `
+              /tr http://timestamp.digicert.com `
+              /f $pfxPath `
+              /p $env:SIGNING_PFX_PASSWORD `
+              $target
+
+            $signature = Get-AuthenticodeSignature -LiteralPath $target
+            if ($signature.Status -ne "Valid") {
+              throw "$target signature verification failed: $($signature.Status)."
+            }
+          }
+
+          Remove-Item -LiteralPath $pfxPath -Force
+
+      - name: Warn when signing is not configured
+        if: env.SIGNING_PFX_BASE64 == ''
+        shell: pwsh
+        run: Write-Warning "Signing secrets are not configured. Publishing unsigned assets with SHA-256 verification."
+
+      - name: Build release packages and checksums
+        if: steps.version.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $zipName = "CryoTray-$version-win-x64.zip"
+          $setupName = "CryoTray-Setup-$version.exe"
+          $updateZipName = "CryoTray-Update-$version-win-x64.zip"
+          $updateStage = "release\update-payload"
+          New-Item -ItemType Directory -Path release -Force | Out-Null
+
+          Copy-Item -LiteralPath "Resources\PawnIO_setup.exe" -Destination "publish\win-x64\PawnIO_setup.exe" -Force
+          Compress-Archive -Path "publish\win-x64\*" -DestinationPath "release\$zipName" -Force
+          Copy-Item -LiteralPath "Installer\Output\$setupName" -Destination "release\$setupName" -Force
+
+          if (Test-Path -LiteralPath $updateStage) {
+            Remove-Item -LiteralPath $updateStage -Recurse -Force
+          }
+          New-Item -ItemType Directory -Path $updateStage -Force | Out-Null
+          Copy-Item -Path "publish\win-x64\*" -Destination $updateStage -Recurse -Force
+          $updateStagePath = (Resolve-Path -LiteralPath $updateStage).Path
+          $updateFiles = @(Get-ChildItem -LiteralPath $updateStagePath -Recurse -File | ForEach-Object {
+            $_.FullName.Substring($updateStagePath.Length + 1).Replace('\', '/')
+          })
+          $previousTag = ""
+          try {
+            $previousTag = (git describe --tags --abbrev=0 2>$null).Trim()
+          } catch {
+          }
+          if ($previousTag -eq "v$version") {
+            try {
+              $previousTag = (git describe --tags --abbrev=0 "HEAD^" 2>$null).Trim()
+            } catch {
+              $previousTag = ""
+            }
+          }
+
+          $previousAssets = @()
+          if ($previousTag) {
+            $previousDir = "release\previous-update"
+            $previousPayload = "release\previous-update-payload"
+            if (Test-Path -LiteralPath $previousDir) { Remove-Item -LiteralPath $previousDir -Recurse -Force }
+            if (Test-Path -LiteralPath $previousPayload) { Remove-Item -LiteralPath $previousPayload -Recurse -Force }
+            New-Item -ItemType Directory -Path $previousDir -Force | Out-Null
+
+            gh release download $previousTag --pattern "CryoTray-Update-*-win-x64.zip" --dir $previousDir --clobber 2>$null
+            $previousZip = Get-ChildItem -LiteralPath $previousDir -Filter "CryoTray-Update-*.zip" | Select-Object -First 1
+            if (-not $previousZip) {
+              gh release download $previousTag --pattern "CryoTray-*-win-x64.zip" --dir $previousDir --clobber 2>$null
+              $previousZip = Get-ChildItem -LiteralPath $previousDir -Filter "CryoTray-*.zip" |
+                Where-Object { $_.Name -notlike "CryoTray-Update-*" } |
+                Select-Object -First 1
+            }
+
+            if (-not $previousZip) {
+              throw "Previous release $previousTag has no portable or update archive to use as a file baseline."
+            }
+
+            Expand-Archive -LiteralPath $previousZip.FullName -DestinationPath $previousPayload -Force
+            $previousManifestPath = Join-Path $previousPayload "update-manifest.json"
+            if (Test-Path -LiteralPath $previousManifestPath) {
+              $previousManifest = Get-Content -LiteralPath $previousManifestPath -Raw | ConvertFrom-Json
+              $previousAssets = @($previousManifest.files)
+              if ($null -ne $previousManifest.delete) {
+                $previousAssets += @($previousManifest.delete)
+              }
+            } else {
+              $previousPayloadPath = (Resolve-Path -LiteralPath $previousPayload).Path
+              $previousAssets = @(Get-ChildItem -LiteralPath $previousPayloadPath -Recurse -File | ForEach-Object {
+                $_.FullName.Substring($previousPayloadPath.Length + 1).Replace('\', '/')
+              })
+            }
+          }
+
+          $currentSet = [System.Collections.Generic.HashSet[string]]::new(
+            [System.StringComparer]::OrdinalIgnoreCase)
+          foreach ($file in $updateFiles) { [void]$currentSet.Add($file) }
+          $delete = @($previousAssets |
+            ForEach-Object { ([string]$_).Replace('\', '/') } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and -not $currentSet.Contains($_) } |
+            Sort-Object -Unique)
+
+          $hashes = [ordered]@{}
+          foreach ($file in $updateFiles) {
+            $hashes[$file] = (Get-FileHash -LiteralPath (Join-Path $updateStagePath $file) -Algorithm SHA256).Hash.ToLowerInvariant()
+          }
+          [ordered]@{
+            version = $version
+            files = $updateFiles
+            hashes = $hashes
+            delete = $delete
+          } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath "$updateStage\update-manifest.json" -Encoding utf8
+          Compress-Archive -Path "$updateStage\*" -DestinationPath "release\$updateZipName" -Force
+
+          foreach ($artifact in @($zipName, $setupName, $updateZipName)) {
+            $hash = (Get-FileHash -LiteralPath "release\$artifact" -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $artifact" | Set-Content -LiteralPath "release\$artifact.sha256" -Encoding ascii
+          }
+
+          $range = if ($previousTag) { "$previousTag..HEAD" } else { "HEAD" }
+          $commits = @(git log $range --no-merges --pretty=format:"- %s")
+          $commits = $commits | ForEach-Object { $_ -replace "—", "-" }
+          if ($commits.Count -eq 0) {
+            $commits = @("- No code changes recorded.")
+          }
+
+          $setupHashName = "$setupName.sha256"
+          $zipHashName = "$zipName.sha256"
+          $notes = @"
+          # CryoTray v$version
+
+          ## Changes
+
+          $($commits -join "`n")
+
+          ## Download
+
+          - **Installer (Recommended):** Download ``CryoTray-Setup-$version.exe`` (includes bundled PawnIO driver setup) and verify against ``$setupHashName``.
+          - **Portable Zip:** Download ``$zipName``, verify against ``$zipHashName``, extract, run ``PawnIO_setup.exe`` if the driver is missing, then run ``CryoTray.exe``.
+          "@
+
+          Set-Content -LiteralPath "release\notes.md" -Value $notes -Encoding utf8
+
+      - name: Publish GitHub release
+        if: steps.version.outputs.skip != 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          $tag = "v$version"
+          $zipName = "CryoTray-$version-win-x64.zip"
+          $setupName = "CryoTray-Setup-$version.exe"
+          $updateZipName = "CryoTray-Update-$version-win-x64.zip"
+
+          gh release create $tag `
+            "release\$setupName" `
+            "release\$setupName.sha256" `
+            "release\$zipName" `
+            "release\$zipName.sha256" `
+            "release\$updateZipName" `
+            "release\$updateZipName.sha256" `
+            --title "CryoTray v$version" `
+            --notes-file "release\notes.md"

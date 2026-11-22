@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>AnyCPU;x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+    <AssemblyName>CryoTray</AssemblyName>
+    <RootNamespace>CryoTray</RootNamespace>
+    <ApplicationIcon>Images\CryoTray.ico</ApplicationIcon>
+    <Version>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\VERSION').Trim())</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+    <Authors>ZeroNuxi</Authors>
+    <Company>ZerroDevs</Company>
+    <Copyright>Copyright © 2026 ZeroNuxi - ZerroDevs</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\CryoTray.ico" />
+    <Resource Include="Images\CryoTray_Logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Packaged by Inno Setup straight from Resources\; never part of build or publish output. -->
+    <None Update="Resources\PawnIO_setup.exe" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+    <None Update="Resources\CryoTray.txt" CopyToOutputDirectory="Never" CopyToPublishDirectory="Never" />
+    <EmbeddedResource Include="Resources\CryoTray.pow" />
+    <None Include="VERSION" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="LICENSE" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Include="NOTICE" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
+    <PackageReference Include="System.Management" Version="10.0.2" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,189 @@
+/* Shared typography, buttons, and controls. */
+/* Shared type and controls */
+
+h1,
+h2,
+h3,
+h4,
+p,
+dl,
+dd {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+h1 {
+  max-width: 12ch;
+  font-size: clamp(2.75rem, 5.6vw, 4.6rem);
+  font-weight: 580;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+}
+
+h2 {
+  max-width: 18ch;
+  font-size: clamp(2rem, 3.8vw, 3.25rem);
+  font-weight: 580;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+}
+
+h3 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+.lede {
+  max-width: 54ch;
+  margin-block-start: 24px;
+  color: var(--text-secondary);
+  font-size: clamp(16px, 1.6vw, 18.5px);
+  line-height: 1.65;
+}
+
+.laptop-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 540px;
+  margin-block-start: 22px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.laptop-note svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin-block-start: 1px;
+  fill: none;
+  stroke: var(--on-text);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.laptop-note strong {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.section-copy {
+  max-width: 60ch;
+  margin-block-start: 16px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-size: 13.5px;
+  font-weight: 650;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.btn-primary {
+  background: var(--on);
+  border-color: var(--on);
+  color: var(--text-on-accent);
+}
+
+.btn-primary:hover {
+  background: var(--on-hover);
+  border-color: var(--on-hover);
+  color: var(--text-on-accent);
+}
+
+.btn-primary:active {
+  background: var(--on-pressed);
+  border-color: var(--on-pressed);
+  color: var(--text);
+}
+
+.btn-secondary {
+  background: var(--surface-panel);
+  border-color: var(--border-control);
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-card-alt);
+  border-color: var(--text-tertiary);
+  color: var(--text);
+}
+
+.btn-secondary:active {
+  background: var(--inset);
+}
+
+.btn-danger {
+  background: #d32f2f;
+  border-color: #d32f2f;
+  color: #ffffff;
+}
+
+.btn-danger:hover {
+  background: #b71c1c;
+  border-color: #b71c1c;
+  color: #ffffff;
+}
+
+.btn-quiet {
+  min-height: 44px;
+  padding: 0 12px;
+  border-color: var(--border-control);
+  background: var(--surface-card);
+  color: var(--text);
+}
+
+.btn-quiet:hover {
+  background: var(--surface-card-alt);
+}
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--on-text);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.text-link:hover {
+  color: var(--text);
+}
+

@@ -1,0 +1,86 @@
+/* Hero layout and copy. */
+/* Hero */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(64px, 7vw, 102px) clamp(64px, 7vw, 94px);
+  border-bottom: 1px solid var(--divider);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(380px, 440px);
+  align-items: center;
+  gap: clamp(40px, 6vw, 78px);
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-block-start: 30px;
+}
+
+.hero-actions .btn {
+  min-height: 48px;
+  padding-inline: 20px;
+  font-size: 14px;
+}
+
+.hero-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  max-width: 520px;
+  margin-block-start: 38px;
+  padding-block-start: 20px;
+  border-block-start: 1px solid var(--divider);
+}
+
+.hero-facts dt {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.hero-facts dd {
+  margin-block-start: 4px;
+  color: var(--text-title);
+  font-size: 12.5px;
+}
+
+.hero-stage {
+  min-width: 0;
+}
+
+.stage-label {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  width: min(100%, 420px);
+  margin-inline: auto;
+  margin-block-end: 8px;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.stage-note {
+  color: var(--text-muted);
+}
+
+.preview-footnote {
+  width: min(100%, 420px);
+  margin-inline: auto;
+  margin-block-start: 12px;
+  color: var(--text-muted);
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+

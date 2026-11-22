@@ -1,0 +1,296 @@
+<Window x:Class="CryoTray.Views.StressTestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{DynamicResource Stress_Title}"
+        Height="502" Width="480"
+        WindowStartupLocation="Manual"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Icon="pack://application:,,,/Images/CryoTray.ico"
+        BorderBrush="{DynamicResource WindowBorderBrush}"
+        BorderThickness="0"
+        ResizeMode="NoResize"
+        FontFamily="{StaticResource SegoeUIVariableText}"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+
+    <Window.Resources>
+        <!-- Compact dark preset ComboBox (no white system chrome) -->
+        <ControlTemplate x:Key="StressFpsComboTemplate" TargetType="ComboBox">
+            <Grid>
+                <ToggleButton x:Name="ToggleButton"
+                              Background="{DynamicResource InputBackgroundBrush}"
+                              BorderBrush="{DynamicResource BorderStrongBrush}"
+                              BorderThickness="1"
+                              Focusable="False"
+                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                              ClickMode="Press">
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="ComboBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="2">
+                                <Path Data="M0,0 L4,4 L8,0"
+                                      Stroke="{DynamicResource TextTertiaryBrush}"
+                                      StrokeThickness="1.3"
+                                      HorizontalAlignment="Right"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,6,0"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ComboBorder" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                    <Setter TargetName="ComboBorder" Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="ComboBorder" Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+                </ToggleButton>
+
+                <ContentPresenter IsHitTestVisible="False"
+                                  Content="{TemplateBinding SelectionBoxItem}"
+                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Left"
+                                  Margin="7,0,18,0"/>
+
+                <Popup x:Name="PART_Popup"
+                       Placement="Bottom"
+                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                       AllowsTransparency="True"
+                       Focusable="False"
+                       PopupAnimation="Slide">
+                    <Border Background="{DynamicResource PanelAltBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderStrongBrush}"
+                            BorderThickness="1"
+                            CornerRadius="2"
+                            MinWidth="{TemplateBinding ActualWidth}"
+                            MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                        <ScrollViewer SnapsToDevicePixels="True">
+                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                        </ScrollViewer>
+                    </Border>
+                </Popup>
+            </Grid>
+        </ControlTemplate>
+
+        <Style x:Key="StressFpsComboItem" TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="Padding" Value="7,3"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="ItemBorder" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#2B88D8"/>
+                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="StressFpsComboStyle" TargetType="ComboBox">
+            <Setter Property="Template" Value="{StaticResource StressFpsComboTemplate}"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource StressFpsComboItem}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontSize" Value="9.5"/>
+            <Setter Property="Height" Value="21"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="{DynamicResource WindowBackgroundBrush}"
+            BorderBrush="{DynamicResource WindowBorderBrush}"
+            BorderThickness="1"
+            SnapsToDevicePixels="True">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Path x:Name="StressHeaderIcon" Data="M4,2 L12,2 L12,4 L14,4 L14,12 L12,12 L12,14 L4,14 L4,12 L2,12 L2,4 L4,4 Z M6,6 L10,6 L10,10 L6,10 Z"
+                      Fill="{DynamicResource WindowBorderBrush}" Width="18" Height="18" Stretch="Uniform" Margin="0,0,10,0"/>
+                <TextBlock Text="{DynamicResource Stress_Header}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="SemiBold"/>
+            </StackPanel>
+            <Button HorizontalAlignment="Right" Click="BtnClose_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="5" AutomationProperties.Name="{DynamicResource Stress_CloseAutomation}">
+                <Path Data="M1,1 L10,10 M10,1 L1,10" Stroke="{DynamicResource TextTertiaryBrush}" StrokeThickness="1.3" Width="11" Height="11" Stretch="Uniform"/>
+            </Button>
+        </Grid>
+
+        <!-- Stats Bar -->
+        <Border Grid.Row="1" Background="{DynamicResource PanelBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="0" Padding="14,10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{DynamicResource Stress_CpuTemp}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtTestTemp" Text="-- °C" Foreground="{DynamicResource CpuAccentBrush}" FontSize="20" FontWeight="Bold" FlowDirection="LeftToRight"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{DynamicResource Stress_CpuSpeed}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtTestSpeed" Text="-- GHz" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="20" FontWeight="Bold" FlowDirection="LeftToRight"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="{DynamicResource Stress_Elapsed}" Foreground="{DynamicResource TextMutedBrush}" FontSize="10" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtElapsed" Text="00:00" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="20" FontWeight="Bold" FlowDirection="LeftToRight"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Cooling OFF vs ON Delta Bar -->
+        <Border x:Name="DeltaSummaryBorder" Grid.Row="2" Background="{DynamicResource PanelAltBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="0" Padding="14,8" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1.35*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="{DynamicResource Stress_PhaseOff}" Foreground="{DynamicResource CoolingOffTextBrush}" FontSize="10" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtPhaseOff" Text="--" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13.5" FontWeight="SemiBold" FlowDirection="LeftToRight" Margin="0,2,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{DynamicResource Stress_PhaseOn}" Foreground="{DynamicResource CoolingOnTextBrush}" FontSize="10" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtPhaseOn" Text="--" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="13.5" FontWeight="SemiBold" FlowDirection="LeftToRight" Margin="0,2,0,0"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="{DynamicResource Stress_PhaseDelta}" Foreground="{DynamicResource SuccessTextBrush}" FontSize="10" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtPhaseDelta" Text="{DynamicResource Stress_DeltaHint}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12.5" FontWeight="Bold" FlowDirection="LeftToRight" TextTrimming="CharacterEllipsis" Margin="0,2,0,0"/>
+                    <TextBlock x:Name="TxtPerformanceRetained" Text="" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" Margin="0,3,0,0"/>
+                    <TextBlock x:Name="TxtFpsImpact" Text="" Foreground="{DynamicResource TextTertiaryBrush}" FontSize="9.5" TextWrapping="Wrap" Cursor="Help" Margin="0,2,0,0" ToolTipService.InitialShowDelay="250" ToolTipService.ShowDuration="15000">
+                        <TextBlock.ToolTip>
+                            <ToolTip Background="{DynamicResource TooltipBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderBrush="{DynamicResource TooltipBorderBrush}" BorderThickness="1" Padding="8,6" MaxWidth="320" FontFamily="{StaticResource SegoeUIVariableText}" FontSize="11">
+                                <TextBlock Text="{DynamicResource Stress_FpsImpactHint}" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap"/>
+                            </ToolTip>
+                        </TextBlock.ToolTip>
+                    </TextBlock>
+                    <ComboBox x:Name="CmbFpsReference"
+                              Width="80"
+                              Margin="0,4,0,0"
+                              HorizontalAlignment="Left"
+                              Style="{StaticResource StressFpsComboStyle}"
+                              SelectionChanged="CmbFpsReference_SelectionChanged"
+                              AutomationProperties.Name="{DynamicResource Stress_FpsReferenceAutomation}">
+                        <ComboBoxItem Content="60 FPS"/>
+                        <ComboBoxItem Content="100 FPS"/>
+                        <ComboBoxItem Content="120 FPS"/>
+                        <ComboBoxItem Content="144 FPS"/>
+                        <ComboBoxItem Content="165 FPS"/>
+                        <ComboBoxItem Content="240 FPS"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Chart Canvas -->
+        <Border Grid.Row="3" Background="{DynamicResource ChartBackgroundBrush}" CornerRadius="0" BorderBrush="{DynamicResource BorderStrongBrush}" BorderThickness="1" Margin="0,0,0,14">
+            <Canvas x:Name="ChartCanvas" FlowDirection="LeftToRight" ClipToBounds="True"/>
+        </Border>
+
+        <!-- Cooling Switch inside test -->
+        <Grid Grid.Row="4" Margin="0,0,0,14">
+            <Grid.Resources>
+                <Style x:Key="StressActionBtnStyle" TargetType="Button">
+                    <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Padding" Value="12,6"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="BtnBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="2"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Background" Value="{DynamicResource HoverBackgroundBrush}"/>
+                                        <Setter TargetName="BtnBorder" Property="BorderBrush" Value="{DynamicResource BorderStrongBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="BorderBrush" Value="{DynamicResource WindowBorderBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="BtnBorder" Property="Background" Value="{DynamicResource ActiveBackgroundBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity" Value="0.42"/>
+                                        <Setter Property="Cursor" Value="Arrow"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Grid.Resources>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="{DynamicResource Stress_CoolingMode}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBlock x:Name="TxtCoolingStatus" Text="{DynamicResource Common_Off}" Foreground="{DynamicResource CoolingOffTextBrush}" FontWeight="Bold" FontSize="13" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button x:Name="BtnExportCsv"
+                        Click="BtnExportCsv_Click"
+                        Content="{DynamicResource Stress_ExportCsv}"
+                        IsEnabled="False"
+                        Style="{StaticResource StressActionBtnStyle}"
+                        Margin="0,0,8,0"/>
+                <Button x:Name="BtnToggleCooling"
+                        Click="BtnToggleCooling_Click"
+                        Content="{DynamicResource Stress_ToggleCooling}"
+                        Style="{StaticResource StressActionBtnStyle}"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- Start / Stop Button -->
+        <Button Grid.Row="5"
+                x:Name="BtnStartStop"
+                Click="BtnStartStop_Click"
+                Content="{DynamicResource Stress_Start}"
+                Height="40"
+                Background="{DynamicResource AccentBrush}"
+                Foreground="{DynamicResource TextPrimaryBrush}"
+                FontWeight="SemiBold"
+                FontSize="14"
+                BorderThickness="0"
+                Cursor="Hand">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="2"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+    </Grid>
+    </Border>
+</Window>
