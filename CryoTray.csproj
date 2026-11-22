@@ -19,9 +19,9 @@
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <InformationalVersion>$(Version)</InformationalVersion>
-    <Authors>ZeroNuxi</Authors>
-    <Company>ZerroDevs</Company>
-    <Copyright>Copyright © 2026 ZeroNuxi - ZerroDevs</Copyright>
+    <Authors>Aryan</Authors>
+    <Company>Aryan</Company>
+    <Copyright>Copyright © 2026 Aryan</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 

@@ -86,7 +86,7 @@ namespace CryoTray.Services
 
     public sealed class UpdateService
     {
-        private const string LatestReleaseApi = "https://api.github.com/repos/ZerroDevs/CryoTray/releases/latest";
+        private const string LatestReleaseApi = "https://api.github.com/repos/hackerlemonaru/CryoTray/releases/latest";
         private const int MaxDownloadAttempts = 3;
         private const long MaxDownloadBytes = 512L * 1024 * 1024;
         private const int MaxReleaseNotesLength = 2400;

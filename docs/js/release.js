@@ -153,11 +153,11 @@ function releaseFromVersion(version, previous) {
   if (!/^\d+\.\d+\.\d+$/.test(clean)) return null;
   const tag = "v" + clean;
   if (previous && previous.tag === tag) return previous;
-  const base = "https://github.com/ZerroDevs/CryoTray/releases/download/" + tag;
+  const base = "https://github.com/hackerlemonaru/CryoTray/releases/download/" + tag;
   return {
     tag,
     publishedAt: null,
-    htmlUrl: "https://github.com/ZerroDevs/CryoTray/releases/tag/" + tag,
+    htmlUrl: "https://github.com/hackerlemonaru/CryoTray/releases/tag/" + tag,
     setup: {
       name: "CryoTray-Setup-" + clean + ".exe",
       size: null,

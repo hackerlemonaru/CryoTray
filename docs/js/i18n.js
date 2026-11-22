@@ -219,7 +219,7 @@ export const I18N = {
     "notFound.panelCopy": "The requested page is outside the tray.",
     "notFound.readout": "Requested path",
 
-    "footer.credit": "Built by ZeroNuxi - ZerroDevs",
+    "footer.credit": "Built by Aryan",
     "footer.license": "Apache-2.0 License"
   },
   ar: {
@@ -441,7 +441,7 @@ export const I18N = {
     "notFound.panelCopy": "الصفحة المطلوبة خارج شريط المهام.",
     "notFound.readout": "المسار المطلوب",
 
-    "footer.credit": "صنعه ZeroNuxi - ZerroDevs",
+    "footer.credit": "صنعه Aryan",
     "footer.license": "ترخيص Apache-2.0"
   }
 };

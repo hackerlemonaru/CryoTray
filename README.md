@@ -15,6 +15,7 @@
 [![Version](https://img.shields.io/badge/Version-v0.0.103-2B88D8?style=for-the-badge)](VERSION)
 [![Sensors](https://img.shields.io/badge/Sensors-LibreHardwareMonitor%200.9.6-1f6feb?style=for-the-badge)](#at-a-glance)
 [![Localization](https://img.shields.io/badge/UI-English%20%7C%20Arabic%20RTL-00b894?style=for-the-badge)](#settings-reference)
+[![Author](https://img.shields.io/badge/Author-Aryan-0d6efd?style=for-the-badge)](https://github.com/hackerlemonaru/CryoTray)
 [![License](https://img.shields.io/badge/License-Apache--2.0-C26A47?style=for-the-badge)](CryoTray.csproj)
 
 *Keep CPU, GPU, memory, and NVMe/SSD thermals visible at a glance without leaving a heavy monitoring suite open.*  
@@ -298,9 +299,9 @@ CryoTray.exe
 ## 📄 License & Attribution
 
 Licensed under the **Apache License, Version 2.0** (`Apache-2.0`).  
-
+Created and maintained by **Aryan** (`Copyright © 2026 Aryan`).
 
 <div align="center">
   <br />
-  <img src="Images/Banner.jpg" alt="CryoTray Classic Banner" width="80%" />
+  <img src="Images/Banner.jpg" alt="CryoTray by Aryan" width="85%" />
 </div>

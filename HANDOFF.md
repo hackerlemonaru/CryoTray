@@ -152,7 +152,7 @@
 
 ## Latest pass (v0.0.101 published and real upgrade test, 2026-11-19)
 
-- Published `v0.0.101` from commit `b3d1387` after packaging fixes `71bcac7` and `b91cd3f`. Main was pushed and manual Release run `44596953838` completed successfully. Release: https://github.com/ZerroDevs/CryoTray/releases/tag/v0.0.101. Assets: setup, portable ZIP, update ZIP, and matching `.sha256` files. Assets are unsigned because signing secrets are not configured.
+- Published `v0.0.101` from commit `b3d1387` after packaging fixes `71bcac7` and `b91cd3f`. Main was pushed and manual Release run `44596953838` completed successfully. Release: https://github.com/hackerlemonaru/CryoTray/releases/tag/v0.0.101. Assets: setup, portable ZIP, update ZIP, and matching `.sha256` files. Assets are unsigned because signing secrets are not configured.
 - Verified the published setup and update-archive checksums. The update archive contains 477 files with matching hashes and one delete entry, `mscordaccore_amd64_amd64_8.0.3326.52219.dll`.
 - Real old-version test: `v0.0.100` was installed and registered at `E:\CryoTray`, running as PID `54340`. About correctly detected `0.0.101`. Clicking **Download and install** downloaded the release, but the old updater selected a ZIP instead of the setup and copied it over E. It failed with `Access is denied`, left E partly overwritten, and closed the app. **The v0.0.100 in-app upgrade path is not working.**
 - Recovery: downloaded the published `CryoTray-Setup-0.0.101.exe`, verified its SHA-256, and installed it silently. E was removed, the Program Files install completed, the uninstall key now points to `C:\Program Files\CryoTray`, no `PawnIO_setup.exe` remains in the app folder, and ProgramData is still owned by Administrators. The startup task initially retained the deleted E path; it was updated to `C:\Program Files\CryoTray\CryoTray.exe /autostart` and the app was started from there as PID `42840`.
@@ -213,7 +213,7 @@
 - Fixed the release workflow tag guard: `git rev-parse --verify` returns status 1 for a missing tag, which aborted the job. Replaced it with a non-failing `git tag --list` check.
 - Fixed the diagnostics drive formatter, which rendered `C:: 98% (Good)` because `DriveLetters` already contains a colon. The generated snapshot now renders `C: 98% (Good)`.
 - Manual `workflow_dispatch` run `44425801854` completed successfully in 3m 1s: full `38 / 38` verification suite, self-contained publish, Inno Setup 6.7.3 installer, checksummed assets, and GitHub release publication.
-- Published [CryoTray v0.0.100](https://github.com/ZerroDevs/CryoTray/releases/tag/v0.0.100) with `CryoTray-Setup-0.0.100.exe` (`50.09 MB`), `CryoTray-0.0.100-win-x64.zip` (`74.57 MB`), and matching `.sha256` files. The published zip was downloaded and verified: `477` entries, `CryoTray.exe`, `PawnIO_setup.exe`, and no PDB files. Assets are unsigned because signing secrets are not configured.
+- Published [CryoTray v0.0.100](https://github.com/hackerlemonaru/CryoTray/releases/tag/v0.0.100) with `CryoTray-Setup-0.0.100.exe` (`50.09 MB`), `CryoTray-0.0.100-win-x64.zip` (`74.57 MB`), and matching `.sha256` files. The published zip was downloaded and verified: `477` entries, `CryoTray.exe`, `PawnIO_setup.exe`, and no PDB files. Assets are unsigned because signing secrets are not configured.
 - Replaced the generated release body with the detailed v0.0.100 notes; fixed the workflow notes template so Markdown backticks no longer suppress `$zipName`/`$hashName` expansion.
 
 ## Previous pass (README audit, installer rebuild)

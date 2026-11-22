@@ -1412,8 +1412,8 @@
                                    TextDecorations="Underline"
                                    Cursor="Hand"
                                    Click="RepoLink_Click"
-                                   ToolTip="https://github.com/ZerroDevs/CryoTray"
-                                   AutomationProperties.Name="{DynamicResource Settings_RepositoryAutomation}">https://github.com/ZerroDevs/CryoTray</Hyperlink>
+                                   ToolTip="https://github.com/hackerlemonaru/CryoTray"
+                                   AutomationProperties.Name="{DynamicResource Settings_RepositoryAutomation}">https://github.com/hackerlemonaru/CryoTray</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>

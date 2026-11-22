@@ -11,10 +11,10 @@ AppId={{8F3B9A12-4D6E-4C2B-9A1F-7E5D3C1B8A90}
 AppName=CryoTray
 AppVersion={#AppVersion}
 AppVerName=CryoTray {#AppVersion}
-AppPublisher=ZeroNuxi - ZerroDevs
-AppPublisherURL=https://github.com/ZerroDevs/CryoTray
-AppSupportURL=https://github.com/ZerroDevs/CryoTray/issues
-AppUpdatesURL=https://github.com/ZerroDevs/CryoTray/releases
+AppPublisher=Aryan
+AppPublisherURL=https://github.com/hackerlemonaru/CryoTray
+AppSupportURL=https://github.com/hackerlemonaru/CryoTray/issues
+AppUpdatesURL=https://github.com/hackerlemonaru/CryoTray/releases
 DefaultDirName={autopf}\CryoTray
 DefaultGroupName=CryoTray
 ; Installed copies must be elevated from a location standard users cannot modify.

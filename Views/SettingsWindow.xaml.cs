@@ -2677,7 +2677,7 @@ namespace CryoTray.Views
         {
             try
             {
-                Process.Start(new ProcessStartInfo("https://github.com/ZerroDevs/CryoTray")
+                Process.Start(new ProcessStartInfo("https://github.com/hackerlemonaru/CryoTray")
                 {
                     UseShellExecute = true
                 });

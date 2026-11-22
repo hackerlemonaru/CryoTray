@@ -1,6 +1,6 @@
 /* Shared demo data and endpoints. */
-const RELEASE_API = "https://api.github.com/repos/ZerroDevs/CryoTray/releases/latest";
-const RELEASE_VERSION_URL = "https://raw.githubusercontent.com/ZerroDevs/CryoTray/main/VERSION";
+const RELEASE_API = "https://api.github.com/repos/hackerlemonaru/CryoTray/releases/latest";
+const RELEASE_VERSION_URL = "https://raw.githubusercontent.com/hackerlemonaru/CryoTray/main/VERSION";
 const RELEASE_CACHE_KEY = "cryotray-docs-release-v2";
 const RELEASE_BLOCK_KEY = "cryotray-docs-release-blocked";
 const RELEASE_API_FRESH_MS = 5 * 60 * 1000;
@@ -274,18 +274,18 @@ const STRESS_PROFILES = [
 const SEED_RELEASE = {
   tag: "v0.0.103",
   publishedAt: "2026-11-19T22:31:40Z",
-  htmlUrl: "https://github.com/ZerroDevs/CryoTray/releases/tag/v0.0.103",
+  htmlUrl: "https://github.com/hackerlemonaru/CryoTray/releases/tag/v0.0.103",
   setup: {
     name: "CryoTray-Setup-0.0.103.exe",
     size: 52548842,
-    url: "https://github.com/ZerroDevs/CryoTray/releases/download/v0.0.103/CryoTray-Setup-0.0.103.exe",
-    shaUrl: "https://github.com/ZerroDevs/CryoTray/releases/download/v0.0.103/CryoTray-Setup-0.0.103.exe.sha256"
+    url: "https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-Setup-0.0.103.exe",
+    shaUrl: "https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-Setup-0.0.103.exe.sha256"
   },
   zip: {
     name: "CryoTray-0.0.103-win-x64.zip",
     size: 78236212,
-    url: "https://github.com/ZerroDevs/CryoTray/releases/download/v0.0.103/CryoTray-0.0.103-win-x64.zip",
-    shaUrl: "https://github.com/ZerroDevs/CryoTray/releases/download/v0.0.103/CryoTray-0.0.103-win-x64.zip.sha256"
+    url: "https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-0.0.103-win-x64.zip",
+    shaUrl: "https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.103/CryoTray-0.0.103-win-x64.zip.sha256"
   }
 };
 

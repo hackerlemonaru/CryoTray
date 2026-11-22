@@ -106,10 +106,10 @@ namespace CryoTray.Tests
                 const string json = """
                 {
                   "assets": [
-                    { "name": "CryoTray-Uninstaller-0.0.104.exe", "browser_download_url": "https://github.com/ZerroDevs/CryoTray/releases/download/v0.0.104/CryoTray-Uninstaller-0.0.104.exe" },
-                    { "name": "CryoTray-Setup-0.0.104.exe", "browser_download_url": "https://github.com/ZerroDevs/CryoTray/releases/download/v0.0.104/CryoTray-Setup-0.0.104.exe" },
-                    { "name": "CryoTray-0.0.104-win-x64.zip", "browser_download_url": "https://github.com/ZerroDevs/CryoTray/releases/download/v0.0.104/CryoTray-0.0.104-win-x64.zip" },
-                    { "name": "CryoTray-Update-0.0.104-win-x64.zip", "browser_download_url": "https://github.com/ZerroDevs/CryoTray/releases/download/v0.0.104/CryoTray-Update-0.0.104-win-x64.zip" }
+                    { "name": "CryoTray-Uninstaller-0.0.104.exe", "browser_download_url": "https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.104/CryoTray-Uninstaller-0.0.104.exe" },
+                    { "name": "CryoTray-Setup-0.0.104.exe", "browser_download_url": "https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.104/CryoTray-Setup-0.0.104.exe" },
+                    { "name": "CryoTray-0.0.104-win-x64.zip", "browser_download_url": "https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.104/CryoTray-0.0.104-win-x64.zip" },
+                    { "name": "CryoTray-Update-0.0.104-win-x64.zip", "browser_download_url": "https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.104/CryoTray-Update-0.0.104-win-x64.zip" }
                   ]
                 }
                 """;
@@ -128,7 +128,7 @@ namespace CryoTray.Tests
                 const string uninstallOnlyJson = """
                 {
                   "assets": [
-                    { "name": "CryoTray-Uninstall-0.0.104.exe", "browser_download_url": "https://github.com/ZerroDevs/CryoTray/releases/download/v0.0.104/CryoTray-Uninstall-0.0.104.exe" }
+                    { "name": "CryoTray-Uninstall-0.0.104.exe", "browser_download_url": "https://github.com/hackerlemonaru/CryoTray/releases/download/v0.0.104/CryoTray-Uninstall-0.0.104.exe" }
                   ]
                 }
                 """;

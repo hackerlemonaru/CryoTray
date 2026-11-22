@@ -107,9 +107,9 @@
     <sys:String x:Key="Main_Timeframe60">60 min</sys:String>
     <sys:String x:Key="Main_AboutTitle">About CryoTray</sys:String>
     <sys:String x:Key="Main_AboutBody">CryoTray
-Created by ZeroNuxi | ZerroDevs
+Created by Aryan
 Licensed under the Apache License, Version 2.0
-https://github.com/ZerroDevs/CryoTray</sys:String>
+https://github.com/hackerlemonaru/CryoTray</sys:String>
 
     <sys:String x:Key="Settings_Title">Settings</sys:String>
     <sys:String x:Key="Settings_CloseAutomation">Close settings</sys:String>
@@ -267,7 +267,7 @@ https://github.com/ZerroDevs/CryoTray</sys:String>
     <sys:String x:Key="Settings_PrimaryGpuAutoNamed">Auto ({0})</sys:String>
     <sys:String x:Key="Settings_AboutTagline">System tray hardware monitor and CPU cooling utility.</sys:String>
     <sys:String x:Key="Settings_AboutVersion">Version {0}</sys:String>
-    <sys:String x:Key="Settings_Author">Created by ZeroNuxi | ZerroDevs</sys:String>
+    <sys:String x:Key="Settings_Author">Created by Aryan</sys:String>
     <sys:String x:Key="Settings_Updates">Updates</sys:String>
     <sys:String x:Key="Settings_UpdatesDesc">Updates are delivered from CryoTray's GitHub Releases.</sys:String>
     <sys:String x:Key="Settings_UpdateDefault">Check GitHub Releases for a newer version.</sys:String>
@@ -305,7 +305,7 @@ https://github.com/ZerroDevs/CryoTray</sys:String>
     <sys:String x:Key="Settings_DownloadFailed">Could not download the update. Try again.</sys:String>
     <sys:String x:Key="Settings_CheckFailed">Could not check GitHub Releases. Check your connection and try again.</sys:String>
     <sys:String x:Key="Settings_RepoError">Could not open the repository link.</sys:String>
-    <sys:String x:Key="Settings_Copyright">Copyright © 2026 ZeroNuxi - ZerroDevs</sys:String>
+    <sys:String x:Key="Settings_Copyright">Copyright © 2026 Aryan</sys:String>
     <sys:String x:Key="Settings_License">Licensed under the Apache License, Version 2.0</sys:String>
     <sys:String x:Key="Settings_RepositoryLabel">Repository: </sys:String>
     <sys:String x:Key="Settings_RepositoryAutomation">Open CryoTray repository on GitHub</sys:String>

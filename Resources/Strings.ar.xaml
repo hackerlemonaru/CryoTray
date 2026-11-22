@@ -107,9 +107,9 @@
     <sys:String x:Key="Main_Timeframe60">60 دقيقة</sys:String>
     <sys:String x:Key="Main_AboutTitle">حول CryoTray</sys:String>
     <sys:String x:Key="Main_AboutBody">CryoTray
-تم الإنشاء بواسطة ZeroNuxi | ZerroDevs
+تم الإنشاء بواسطة Aryan
 مرخص بموجب رخصة Apache License, Version 2.0
-https://github.com/ZerroDevs/CryoTray</sys:String>
+https://github.com/hackerlemonaru/CryoTray</sys:String>
 
     <sys:String x:Key="Settings_Title">الإعدادات</sys:String>
     <sys:String x:Key="Settings_CloseAutomation">إغلاق الإعدادات</sys:String>
@@ -267,7 +267,7 @@ https://github.com/ZerroDevs/CryoTray</sys:String>
     <sys:String x:Key="Settings_PrimaryGpuAutoNamed">تلقائي ({0})</sys:String>
     <sys:String x:Key="Settings_AboutTagline">أداة مراقبة عتاد وتبريد معالج من شريط المهام.</sys:String>
     <sys:String x:Key="Settings_AboutVersion">الإصدار {0}</sys:String>
-    <sys:String x:Key="Settings_Author">تم الإنشاء بواسطة ZeroNuxi | ZerroDevs</sys:String>
+    <sys:String x:Key="Settings_Author">تم الإنشاء بواسطة Aryan</sys:String>
     <sys:String x:Key="Settings_Updates">التحديثات</sys:String>
     <sys:String x:Key="Settings_UpdatesDesc">يتم توفير التحديثات من إصدارات CryoTray على GitHub.</sys:String>
     <sys:String x:Key="Settings_UpdateDefault">تحقق من إصدارات GitHub بحثاً عن إصدار أحدث.</sys:String>
@@ -305,7 +305,7 @@ https://github.com/ZerroDevs/CryoTray</sys:String>
     <sys:String x:Key="Settings_DownloadFailed">تعذر تنزيل التحديث. حاول مرة أخرى.</sys:String>
     <sys:String x:Key="Settings_CheckFailed">تعذر التحقق من إصدارات GitHub. تحقق من اتصالك وحاول مرة أخرى.</sys:String>
     <sys:String x:Key="Settings_RepoError">تعذر فتح رابط المستودع.</sys:String>
-    <sys:String x:Key="Settings_Copyright">حقوق النشر © 2026 ZeroNuxi - ZerroDevs</sys:String>
+    <sys:String x:Key="Settings_Copyright">حقوق النشر © 2026 Aryan</sys:String>
     <sys:String x:Key="Settings_License">مرخص بموجب رخصة Apache License, Version 2.0</sys:String>
     <sys:String x:Key="Settings_RepositoryLabel">المستودع: </sys:String>
     <sys:String x:Key="Settings_RepositoryAutomation">فتح مستودع CryoTray على GitHub</sys:String>
